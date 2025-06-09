@@ -13,7 +13,7 @@ class SimpleLoopState: ObservableObject {
     @Published var fileURL: URL?
     @Published var inputLevel: Float = 0.0
     @Published var playbackVolume: Float = 0.7
-    @Published var inputMonitoringEnabled: Bool = true
+    @Published var inputMonitoringEnabled: Bool = false
     
     // Helper computed properties
     var canRecord: Bool {

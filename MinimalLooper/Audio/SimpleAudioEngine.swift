@@ -17,6 +17,10 @@ class SimpleAudioEngine: ObservableObject {
     private var isLevelMonitoringEnabled = false
     private var isRecordingActive = false
     
+    // Level update throttling to prevent rate limit warnings
+    private var lastLevelUpdateTime: Date = Date()
+    private let levelUpdateInterval: TimeInterval = 1.0 / 30.0 // 30 Hz max updates
+    
     init() {
         inputNode = audioEngine.inputNode
         mainMixer = audioEngine.mainMixerNode
@@ -104,11 +108,17 @@ class SimpleAudioEngine: ObservableObject {
         
         // Store the recording handler
         let levelHandler = isLevelMonitoringEnabled ? { [weak self] (buffer: AVAudioPCMBuffer, time: AVAudioTime) in
-            // Calculate level
+            // Calculate level with throttling
             guard let self = self else { return }
-            let level = self.calculateLevel(from: buffer)
-            DispatchQueue.main.async {
-                self.inputLevel = level
+            let now = Date()
+            
+            // Throttle updates to avoid rate limit warnings
+            if now.timeIntervalSince(self.lastLevelUpdateTime) >= self.levelUpdateInterval {
+                let level = self.calculateLevel(from: buffer)
+                DispatchQueue.main.async {
+                    self.inputLevel = level
+                }
+                self.lastLevelUpdateTime = now
             }
         } : nil
         
@@ -136,12 +146,18 @@ class SimpleAudioEngine: ObservableObject {
         }
         
         if isLevelMonitoringEnabled {
-            // Only level monitoring needed
+            // Only level monitoring needed - with throttling
             tapHandler = { [weak self] buffer, time in
                 guard let self = self else { return }
-                let level = self.calculateLevel(from: buffer)
-                DispatchQueue.main.async {
-                    self.inputLevel = level
+                let now = Date()
+                
+                // Throttle updates to avoid rate limit warnings
+                if now.timeIntervalSince(self.lastLevelUpdateTime) >= self.levelUpdateInterval {
+                    let level = self.calculateLevel(from: buffer)
+                    DispatchQueue.main.async {
+                        self.inputLevel = level
+                    }
+                    self.lastLevelUpdateTime = now
                 }
             }
             installUnifiedTap()

@@ -1,46 +1,6 @@
 import SwiftUI
 
-struct InputMonitoringView: View {
-    let level: Float
-    let isMonitoringEnabled: Bool
-    let onToggleMonitoring: () -> Void
-    
-    var body: some View {
-        VStack(spacing: 8) {
-            LevelMeterView(level: level)
-            
-            HStack(spacing: 8) {
-                Toggle("Monitor Input", isOn: Binding(
-                    get: { isMonitoringEnabled },
-                    set: { _ in onToggleMonitoring() }
-                ))
-                .toggleStyle(CheckboxToggleStyle())
-                
-                Spacer()
-            }
-        }
-    }
-}
-
-struct CheckboxToggleStyle: ToggleStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        Button {
-            configuration.isOn.toggle()
-        } label: {
-            HStack(spacing: 6) {
-                Image(systemName: configuration.isOn ? "checkmark.square.fill" : "square")
-                    .foregroundColor(configuration.isOn ? .accentColor : .secondary)
-                    .font(.system(size: 16))
-                
-                configuration.label
-                    .font(.caption)
-                    .foregroundColor(.primary)
-            }
-        }
-        .buttonStyle(.plain)
-    }
-}
-
+// MARK: - Standalone Level Meter View
 struct LevelMeterView: View {
     let level: Float
     private let meterHeight: CGFloat = 20
@@ -49,9 +9,9 @@ struct LevelMeterView: View {
     
     var body: some View {
         VStack(spacing: 4) {
-            Text("Input Level")
-                .font(.caption)
-                .foregroundColor(.secondary)
+//            Text("Input Level")
+//                .font(.caption)
+//                .foregroundColor(.secondary)
             
             HStack(spacing: 2) {
                 ForEach(0..<segmentCount, id: \.self) { index in
@@ -84,8 +44,82 @@ struct LevelMeterView: View {
     }
 }
 
+// MARK: - Standalone Input Monitoring Toggle View
+struct InputMonitoringToggleView: View {
+    let isMonitoringEnabled: Bool
+    let onToggleMonitoring: () -> Void
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            Toggle("Input Monitor", isOn: Binding(
+                get: { isMonitoringEnabled },
+                set: { _ in onToggleMonitoring() }
+            ))
+            .toggleStyle(CheckboxToggleStyle())
+            Spacer()
+        }
+    }
+}
+
+// MARK: - Combined Input Monitoring View (for backward compatibility)
+struct InputMonitoringView: View {
+    let level: Float
+    let isMonitoringEnabled: Bool
+    let onToggleMonitoring: () -> Void
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            LevelMeterView(level: level)
+            
+            InputMonitoringToggleView(
+                isMonitoringEnabled: isMonitoringEnabled,
+                onToggleMonitoring: onToggleMonitoring
+            )
+        }
+    }
+}
+
+// MARK: - Custom Toggle Style
+struct CheckboxToggleStyle: ToggleStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        Button {
+            configuration.isOn.toggle()
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: configuration.isOn ? "speaker.wave.2.fill" : "speaker.slash.fill")
+                    .foregroundColor(configuration.isOn ? .red : .red)
+                    .font(.system(size: 16))
+                    .frame(width: 20, height: 16)
+                    .contentShape(Rectangle())
+                
+                configuration.label
+                    .font(.caption)
+                    .foregroundColor(.primary)
+            }
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Preview
 #Preview {
     VStack(spacing: 20) {
+        // Test separate components
+        Text("Separate Components:")
+            .font(.headline)
+        
+        LevelMeterView(level: 0.7)
+        
+        InputMonitoringToggleView(
+            isMonitoringEnabled: true,
+            onToggleMonitoring: {}
+        )
+        
+        Divider()
+        
+        Text("Combined View (Original):")
+            .font(.headline)
+        
         InputMonitoringView(
             level: 0.5,
             isMonitoringEnabled: true,
@@ -100,7 +134,10 @@ struct LevelMeterView: View {
         
         Divider()
         
-        LevelMeterView(level: 0.0)
+        Text("Level Meter Only:")
+            .font(.headline)
+        
+        LevelMeterView(level: 0.1)
         LevelMeterView(level: 0.3)
         LevelMeterView(level: 0.7)
         LevelMeterView(level: 0.9)

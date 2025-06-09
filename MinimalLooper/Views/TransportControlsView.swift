@@ -12,14 +12,14 @@ struct TransportControlsView: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            Text("Transport Controls")
-                .font(.caption)
-                .foregroundColor(.secondary)
+//            Text("Transport Controls")
+//                .font(.caption)
+//                .foregroundColor(.secondary)
             
             HStack(spacing: 20) {
                 // Record Button
                 Button(action: onRecord) {
-                    Image(systemName: recordButtonIcon)
+                    Image(systemName: "circle.fill")
                         .font(.system(size: 24, weight: .bold))
                         .foregroundColor(.white)
                         .frame(width: buttonSize, height: buttonSize)
@@ -27,12 +27,13 @@ struct TransportControlsView: View {
                         .clipShape(Circle())
                         .scaleEffect(recordButtonScale)
                 }
+                .buttonStyle(.plain)
                 .disabled(!recordButtonEnabled)
                 .animation(.easeInOut(duration: 0.2), value: loopState.transportState)
                 
                 // Play Button
                 Button(action: onPlay) {
-                    Image(systemName: playButtonIcon)
+                    Image(systemName: "play.fill")
                         .font(.system(size: 24, weight: .bold))
                         .foregroundColor(.white)
                         .frame(width: buttonSize, height: buttonSize)
@@ -40,6 +41,7 @@ struct TransportControlsView: View {
                         .clipShape(Circle())
                         .scaleEffect(playButtonScale)
                 }
+                .buttonStyle(.plain)
                 .disabled(!playButtonEnabled)
                 .animation(.easeInOut(duration: 0.2), value: loopState.transportState)
                 
@@ -53,12 +55,13 @@ struct TransportControlsView: View {
                         .clipShape(Circle())
                         .scaleEffect(stopButtonScale)
                 }
+                .buttonStyle(.plain)
                 .disabled(!stopButtonEnabled)
                 .animation(.easeInOut(duration: 0.2), value: loopState.transportState)
                 
                 // Clear Button
                 Button(action: onClear) {
-                    Image(systemName: "trash.fill")
+                    Image(systemName: "xmark")
                         .font(.system(size: 24, weight: .bold))
                         .foregroundColor(.white)
                         .frame(width: buttonSize, height: buttonSize)
@@ -66,32 +69,33 @@ struct TransportControlsView: View {
                         .clipShape(Circle())
                         .scaleEffect(clearButtonScale)
                 }
+                .buttonStyle(.plain)
                 .disabled(!clearButtonEnabled)
                 .animation(.easeInOut(duration: 0.2), value: loopState.transportState)
             }
             
             // Button labels
-            HStack(spacing: 20) {
-                Text("Record")
-                    .frame(width: buttonSize)
-                    .font(.caption)
-                    .foregroundColor(recordButtonEnabled ? .primary : .secondary)
-                
-                Text("Play")
-                    .frame(width: buttonSize)
-                    .font(.caption)
-                    .foregroundColor(playButtonEnabled ? .primary : .secondary)
-                
-                Text("Stop")
-                    .frame(width: buttonSize)
-                    .font(.caption)
-                    .foregroundColor(stopButtonEnabled ? .primary : .secondary)
-                
-                Text("Clear")
-                    .frame(width: buttonSize)
-                    .font(.caption)
-                    .foregroundColor(clearButtonEnabled ? .primary : .secondary)
-            }
+//            HStack(spacing: 20) {
+//                Text("Record")
+//                    .frame(width: buttonSize)
+//                    .font(.caption)
+//                    .foregroundColor(recordButtonEnabled ? .primary : .secondary)
+//                
+//                Text("Play")
+//                    .frame(width: buttonSize)
+//                    .font(.caption)
+//                    .foregroundColor(playButtonEnabled ? .primary : .secondary)
+//                
+//                Text("Stop")
+//                    .frame(width: buttonSize)
+//                    .font(.caption)
+//                    .foregroundColor(stopButtonEnabled ? .primary : .secondary)
+//                
+//                Text("Clear")
+//                    .frame(width: buttonSize)
+//                    .font(.caption)
+//                    .foregroundColor(clearButtonEnabled ? .primary : .secondary)
+//            }
         }
     }
     
@@ -150,19 +154,19 @@ struct TransportControlsView: View {
     // MARK: - Button Scales
     
     private var recordButtonScale: CGFloat {
-        loopState.transportState == .recording ? 1.1 : 1.0
+        loopState.transportState == .recording ? 1.0 : 1.0
     }
     
     private var playButtonScale: CGFloat {
-        loopState.transportState == .playing ? 1.1 : 1.0
+        loopState.transportState == .playing ? 1.0 : 1.0
     }
     
     private var stopButtonScale: CGFloat {
-        stopButtonEnabled ? 1.0 : 0.9
+        stopButtonEnabled ? 1.0 : 1.0
     }
     
     private var clearButtonScale: CGFloat {
-        clearButtonEnabled ? 1.0 : 0.9
+        clearButtonEnabled ? 1.0 : 1.0
     }
 }
 

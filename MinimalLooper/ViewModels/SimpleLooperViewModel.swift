@@ -46,16 +46,12 @@ class SimpleLooperViewModel: ObservableObject {
     // MARK: - Transport Control Actions
     
     func recordButtonPressed() {
-        print("🔴 [DEBUG] Record button pressed - current state: \(loopState.transportState)")
         switch loopState.transportState {
         case .stopped:
-            print("🔴 [DEBUG] Starting recording from stopped state")
             startRecording()
         case .recording:
-            print("🔴 [DEBUG] Stopping recording and starting playback")
             stopRecordingAndStartPlayback()
         case .playing:
-            print("🔴 [DEBUG] Record button pressed while playing (should not happen)")
             break // Should not be reachable when recording button is enabled
         }
     }
@@ -102,17 +98,12 @@ class SimpleLooperViewModel: ObservableObject {
     // MARK: - Private Implementation
     
     private func startRecording() {
-        print("🎤 [DEBUG] startRecording() called")
         do {
-            print("🎤 [DEBUG] Creating recorder from audio engine")
             recorder = audioEngine.createRecorder()
-            print("🎤 [DEBUG] Recorder created, attempting to start recording")
             try recorder?.startRecording()
             
-            print("🎤 [DEBUG] Recording started successfully, updating state")
             loopState.transportState = .recording
             loopState.isRecording = true
-            print("🎤 [DEBUG] State updated - transportState: \(loopState.transportState), isRecording: \(loopState.isRecording)")
         } catch {
             print("❌ [ERROR] Failed to start recording: \(error)")
             print("❌ [ERROR] Error details: \(error.localizedDescription)")
@@ -121,23 +112,17 @@ class SimpleLooperViewModel: ObservableObject {
     }
     
     private func stopRecording() {
-        print("🛑 [DEBUG] stopRecording() called")
         recorder?.stopRecording()
         
-        print("🛑 [DEBUG] Updating state to stopped")
         loopState.transportState = .stopped
         loopState.isRecording = false
         
         if let recordingURL = recorder?.getRecordingURL() {
-            print("🛑 [DEBUG] Recording URL found: \(recordingURL)")
-            print("🛑 [DEBUG] Checking if file exists at URL...")
             let fileExists = FileManager.default.fileExists(atPath: recordingURL.path)
-            print("🛑 [DEBUG] File exists: \(fileExists)")
             
             if fileExists {
                 do {
-                    let fileSize = try FileManager.default.attributesOfItem(atPath: recordingURL.path)[.size] as? Int64 ?? 0
-                    print("🛑 [DEBUG] File size: \(fileSize) bytes")
+                    _ = try FileManager.default.attributesOfItem(atPath: recordingURL.path)[.size] as? Int64 ?? 0
                 } catch {
                     print("❌ [ERROR] Could not get file size: \(error)")
                 }
@@ -145,12 +130,10 @@ class SimpleLooperViewModel: ObservableObject {
             
             loopState.fileURL = recordingURL
             loopState.hasAudio = true
-            print("🛑 [DEBUG] Loop state updated - hasAudio: \(loopState.hasAudio)")
         } else {
             print("❌ [ERROR] No recording URL found!")
         }
-        
-        print("🛑 [DEBUG] Recording stopped")
+
     }
     
     private func stopRecordingAndStartPlayback() {
