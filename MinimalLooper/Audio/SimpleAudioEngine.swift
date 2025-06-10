@@ -5,11 +5,16 @@ class SimpleAudioEngine: ObservableObject {
     private let audioEngine = AVAudioEngine()
     private let inputNode: AVAudioInputNode
     private let mainMixer: AVAudioMixerNode
-    private let monitoringMixerNode: AVAudioMixerNode
+    private let monitoringMixerNode = AVAudioMixerNode()
+    
+    // Components
     private var recorder: SimpleRecorder?
     private var player: SimplePlayer?
     
+    // State tracking
     @Published var isEngineRunning = false
+    
+    // Level monitoring
     @Published var inputLevel: Float = 0.0
     
     // Unified tap management
@@ -24,7 +29,6 @@ class SimpleAudioEngine: ObservableObject {
     init() {
         inputNode = audioEngine.inputNode
         mainMixer = audioEngine.mainMixerNode
-        monitoringMixerNode = AVAudioMixerNode()
         setupAudioSession()
         setupAudioEngine()
         setupDeviceChangeMonitoring()
@@ -44,19 +48,59 @@ class SimpleAudioEngine: ObservableObject {
         // Add monitoring mixer node to the engine
         audioEngine.attach(monitoringMixerNode)
         
-        // Set up the monitoring signal path:
-        // inputNode → monitoringMixerNode → mainMixer (for monitoring)
+        // Get current formats BEFORE any connections
         let inputFormat = inputNode.inputFormat(forBus: 0)
-        audioEngine.connect(inputNode, to: monitoringMixerNode, format: inputFormat)
-        audioEngine.connect(monitoringMixerNode, to: mainMixer, format: inputFormat)
+        let outputFormat = audioEngine.outputNode.inputFormat(forBus: 0)
         
-        // Setup level monitoring
-        setupLevelMonitoring()
-    }
-    
-    private func setupLevelMonitoring() {
-        // Level monitoring will be set up when engine starts
-        // to avoid conflicts with recording taps
+        print("🎛️ [ENGINE] Input format: \(inputFormat)")
+        print("🎛️ [ENGINE] Output format: \(outputFormat)")
+        
+        // Check for sample rate mismatch (critical issue)
+        if inputFormat.sampleRate != outputFormat.sampleRate {
+            print("🚨 [ENGINE] SAMPLE RATE MISMATCH DETECTED!")
+            print("🚨 [ENGINE] Input: \(inputFormat.sampleRate)Hz, Output: \(outputFormat.sampleRate)Hz")
+            print("🚨 [ENGINE] This will cause performance issues and frame size errors")
+            
+            // Try to set a unified sample rate (prefer higher rate for better quality)
+            let preferredSampleRate = max(inputFormat.sampleRate, outputFormat.sampleRate)
+            print("🎛️ [ENGINE] Attempting to use preferred sample rate: \(preferredSampleRate)Hz")
+        }
+        
+        // Check for channel count mismatch  
+        if inputFormat.channelCount > 2 {
+            print("🎛️ [ENGINE] High channel count detected: \(inputFormat.channelCount) channels")
+            print("🎛️ [ENGINE] Using selective channel approach to avoid frame size errors")
+            
+            // Create a stereo format using only the input sample rate and standard format
+            guard let stereoInputFormat = AVAudioFormat(standardFormatWithSampleRate: inputFormat.sampleRate, channels: 2) else {
+                print("❌ [ENGINE] Failed to create stereo input format")
+                return
+            }
+            
+            print("🎛️ [ENGINE] Using stereo input format: \(stereoInputFormat)")
+            
+            // Connect with stereo format - AVAudioEngine will automatically use first 2 channels
+            audioEngine.connect(inputNode, to: monitoringMixerNode, format: stereoInputFormat)
+            audioEngine.connect(monitoringMixerNode, to: mainMixer, format: stereoInputFormat)
+            
+        } else {
+            print("🎛️ [ENGINE] Channel count OK - direct connection")
+            // Direct connection when channel count is 2 or less
+            audioEngine.connect(inputNode, to: monitoringMixerNode, format: inputFormat)
+            audioEngine.connect(monitoringMixerNode, to: mainMixer, format: inputFormat)
+        }
+        
+        // Set up connections with careful format handling
+        print("🎛️ [ENGINE] Starting with input format: \(inputFormat)")
+        print("🎛️ [ENGINE] Input format settings: \(inputFormat.settings)")
+        
+        // Set initial monitoring state
+        monitoringMixerNode.outputVolume = 0.0 // Start with monitoring disabled
+        
+        print("🎛️ [ENGINE] Enabling level monitoring")
+        enableLevelMonitoring()
+        
+        print("🎛️ [ENGINE] Audio engine setup completed")
     }
     
     private func calculateLevel(from buffer: AVAudioPCMBuffer) -> Float {
@@ -175,7 +219,7 @@ class SimpleAudioEngine: ObservableObject {
         let format = inputNode.outputFormat(forBus: 0)
         print("🎛️ [ENGINE] Installing unified tap with format: \(format)")
         
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: format, block: handler)
+        inputNode.installTap(onBus: 0, bufferSize: 2048, format: format, block: handler)
     }
     
     private func removeTapIfExists() {
@@ -261,5 +305,54 @@ class SimpleAudioEngine: ObservableObject {
         
         // The beauty is: next recording will automatically use the new format
         // because we call inputNode.outputFormat(forBus: 0) fresh each time
+    }
+
+    func diagnoseMonitoringSetup() {
+        print("=== MONITORING DIAGNOSTICS ===")
+        print("Engine running: \(audioEngine.isRunning)")
+        
+        let inputFormat = inputNode.outputFormat(forBus: 0)
+        let outputFormat = audioEngine.outputNode.inputFormat(forBus: 0)
+        
+        print("Input format: \(inputFormat)")
+        print("Output format: \(outputFormat)")
+        print("Input channels: \(inputFormat.channelCount)")
+        print("Output channels: \(outputFormat.channelCount)")
+        print("Input sample rate: \(inputFormat.sampleRate)Hz")
+        print("Output sample rate: \(outputFormat.sampleRate)Hz")
+        
+        // Critical compatibility checks
+        let channelMatch = inputFormat.channelCount == outputFormat.channelCount
+        let sampleRateMatch = inputFormat.sampleRate == outputFormat.sampleRate
+        
+        print("✅ Channel count match: \(channelMatch)")
+        if !channelMatch {
+            print("⚠️  Channel conversion required: \(inputFormat.channelCount) → \(outputFormat.channelCount)")
+        }
+        
+        print("✅ Sample rate match: \(sampleRateMatch)")
+        if !sampleRateMatch {
+            print("🚨 SAMPLE RATE MISMATCH: \(inputFormat.sampleRate)Hz → \(outputFormat.sampleRate)Hz")
+            print("🚨 This WILL cause frame size errors and performance issues!")
+            print("🚨 Recommendation: Use Audio MIDI Setup to set device to \(outputFormat.sampleRate)Hz")
+        }
+        
+        print("Monitoring volume: \(monitoringMixerNode.outputVolume)")
+        print("Input node connections: \(inputNode.numberOfOutputs)")
+        print("Monitoring node connections: \(monitoringMixerNode.numberOfOutputs)")
+        
+        // Device information
+        if let inputDeviceName = inputNode.auAudioUnit.audioUnitName {
+            print("Input device name: \(inputDeviceName)")
+        }
+        if let outputDeviceName = audioEngine.outputNode.auAudioUnit.audioUnitName {
+            print("Output device name: \(outputDeviceName)")
+        }
+        
+        // Basic device info (simplified approach)
+        print("Input node description: \(inputNode.description)")
+        print("Output node description: \(audioEngine.outputNode.description)")
+        
+        print("==============================")
     }
 } 

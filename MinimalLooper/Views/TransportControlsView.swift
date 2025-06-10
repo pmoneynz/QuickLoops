@@ -30,6 +30,7 @@ struct TransportControlsView: View {
                 .buttonStyle(.plain)
                 .disabled(!recordButtonEnabled)
                 .animation(.easeInOut(duration: 0.2), value: loopState.transportState)
+                .keyboardShortcut(.return, modifiers: [])
                 
                 // Play Button
                 Button(action: onPlay) {
@@ -44,6 +45,7 @@ struct TransportControlsView: View {
                 .buttonStyle(.plain)
                 .disabled(!playButtonEnabled)
                 .animation(.easeInOut(duration: 0.2), value: loopState.transportState)
+                .keyboardShortcut(.space, modifiers: [])
                 
                 // Stop Button
                 Button(action: onStop) {
@@ -58,6 +60,7 @@ struct TransportControlsView: View {
                 .buttonStyle(.plain)
                 .disabled(!stopButtonEnabled)
                 .animation(.easeInOut(duration: 0.2), value: loopState.transportState)
+                .keyboardShortcut(".", modifiers: [.command])
                 
                 // Clear Button
                 Button(action: onClear) {
@@ -72,6 +75,7 @@ struct TransportControlsView: View {
                 .buttonStyle(.plain)
                 .disabled(!clearButtonEnabled)
                 .animation(.easeInOut(duration: 0.2), value: loopState.transportState)
+                .keyboardShortcut(.delete, modifiers: [.command])
             }
             
             // Button labels

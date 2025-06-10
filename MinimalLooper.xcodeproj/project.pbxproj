@@ -364,6 +364,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pmoneymusic.minimallooper;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -395,6 +396,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pmoneymusic.minimallooper;
 				PRODUCT_NAME = "$(TARGET_NAME)";

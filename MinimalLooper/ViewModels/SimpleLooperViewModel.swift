@@ -185,4 +185,9 @@ class SimpleLooperViewModel: ObservableObject {
         
         print("Loop cleared")
     }
+    
+    func runMonitoringDiagnostic() {
+        print("🔍 [DIAGNOSTIC] Running monitoring diagnostic...")
+        audioEngine.diagnoseMonitoringSetup()
+    }
 } 

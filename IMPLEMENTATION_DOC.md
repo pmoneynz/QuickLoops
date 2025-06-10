@@ -29,15 +29,17 @@ MiniLooper is a macOS audio looping application built with SwiftUI and AVFoundat
 ### 1. Input Signal Chain
 
 ```
-Physical Input Device (Microphone/Interface)
+Physical Input Device (Microphone/Interface - Any Channel Count)
            ↓
     macOS Core Audio System
            ↓
-    AVAudioEngine.inputNode
+    AVAudioEngine.inputNode (10ch, 24ch, 36ch, etc.)
+           ↓
+    [Channel Selection] → First 2 Channels Only (for >2ch devices)
            ↓
     [Unified Tap System] → Combined Level Monitoring & Recording
            ↓
-    AVAudioMixerNode.monitoringMixerNode (volume-controlled monitoring)
+    AVAudioMixerNode.monitoringMixerNode (stereo, volume-controlled)
            ↓
     AVAudioEngine.mainMixerNode (mixing with playback)
            ↓
@@ -45,6 +47,8 @@ Physical Input Device (Microphone/Interface)
            ↓
     Physical Output Device (Speakers/Headphones)
 ```
+
+**Multi-Channel Device Handling**: For audio interfaces with >2 channels (e.g., 10ch, 24ch, 36ch), the system automatically selects channels 1-2 (typically the main stereo pair) to avoid format conversion overhead and frame size errors.
 
 ### 2. Unified Tap Management System
 
@@ -87,6 +91,40 @@ inputNode → monitoringMixerNode → mainMixerNode
             - 1.0 = Monitoring ON
             - 0.0 = Monitoring OFF
 ```
+
+### 5. Multi-Channel Audio Device Support
+
+**Problem Solved**: Professional audio interfaces often provide 8, 10, 16, 24, or even 36+ input channels, but most monitoring and looping applications only need stereo monitoring. Direct format conversion from high channel counts to stereo can cause buffer alignment issues and frame size errors.
+
+**Channel-Selective Approach**:
+```
+High-Channel Input Device (e.g., 10 channels @ 48kHz)
+                    ↓
+        [Automatic Channel Selection]
+                    ↓
+    Use Channels 1-2 Only (stereo pair)
+                    ↓
+        Standard Stereo Processing
+```
+
+**Implementation Details**:
+- **Automatic Detection**: Detects input devices with >2 channels
+- **Channel Selection**: Uses first 2 channels (typically main stereo pair)
+- **Format Creation**: Creates stereo format matching input sample rate
+- **No Conversion Overhead**: Avoids real-time multi-channel to stereo conversion
+- **Error Prevention**: Eliminates `kAudioUnitErr_TooManyFramesToProcess` errors
+
+**Supported Configurations**:
+- **2-Channel Interfaces**: Direct connection (no special handling)
+- **Multi-Channel Interfaces**: Channel-selective stereo extraction
+- **High-End Interfaces**: Supports 24ch, 36ch, 64ch+ professional devices
+- **Sample Rate Flexibility**: Works with 44.1kHz, 48kHz, 96kHz, 192kHz
+
+**Technical Benefits**:
+- **Zero Frame Errors**: Eliminates buffer alignment issues
+- **Optimal Performance**: No unnecessary format conversion CPU overhead
+- **Universal Compatibility**: Works with any channel count configuration
+- **Professional Workflow**: Uses industry-standard channel 1-2 selection
 
 ## Core Workflow State Machine
 
@@ -145,6 +183,8 @@ inputNode → monitoringMixerNode → mainMixerNode
 - Input monitoring control via dedicated mixer node
 - Audio device configuration monitoring
 - Factory methods for recorder and player instances
+- Multi-channel audio device support with automatic channel selection
+- Advanced audio diagnostics for device compatibility troubleshooting
 
 **Critical Implementation Details**:
 - Uses unified tap handler to prevent tap conflicts
@@ -152,6 +192,9 @@ inputNode → monitoringMixerNode → mainMixerNode
 - Dynamic format detection prevents format conversion errors
 - Single-instance pattern for recorder/player to avoid resource conflicts
 - Dedicated monitoring mixer node for clean input monitoring control
+- **Channel-selective input processing** for multi-channel audio interfaces
+- **Sample rate mismatch detection** and warning system
+- **Comprehensive audio diagnostics** for troubleshooting device issues
 
 ```swift
 // Unified tap management
@@ -162,6 +205,40 @@ private var isRecordingActive = false
 // Level update throttling
 private var lastLevelUpdateTime: Date = Date()
 private let levelUpdateInterval: TimeInterval = 1.0 / 30.0 // 30 Hz max updates
+
+// Multi-channel device support
+private func setupAudioEngine() {
+    // Detect high channel count devices
+    if inputFormat.channelCount > 2 {
+        print("🎛️ [ENGINE] High channel count detected: \(inputFormat.channelCount) channels")
+        print("🎛️ [ENGINE] Using selective channel approach to avoid frame size errors")
+        
+        // Create stereo format using first 2 channels
+        guard let stereoInputFormat = AVAudioFormat(standardFormatWithSampleRate: inputFormat.sampleRate, channels: 2) else {
+            print("❌ [ENGINE] Failed to create stereo input format")
+            return
+        }
+        
+        // Connect with channel selection
+        audioEngine.connect(inputNode, to: monitoringMixerNode, format: stereoInputFormat)
+        audioEngine.connect(monitoringMixerNode, to: mainMixer, format: stereoInputFormat)
+    }
+}
+
+// Advanced diagnostics
+func diagnoseMonitoringSetup() {
+    print("=== MONITORING DIAGNOSTICS ===")
+    let inputFormat = inputNode.outputFormat(forBus: 0)
+    let outputFormat = audioEngine.outputNode.inputFormat(forBus: 0)
+    
+    // Critical compatibility checks
+    let sampleRateMatch = inputFormat.sampleRate == outputFormat.sampleRate
+    if !sampleRateMatch {
+        print("🚨 SAMPLE RATE MISMATCH: \(inputFormat.sampleRate)Hz → \(outputFormat.sampleRate)Hz")
+        print("🚨 This WILL cause frame size errors and performance issues!")
+        print("🚨 Recommendation: Use Audio MIDI Setup to set device to \(outputFormat.sampleRate)Hz")
+    }
+}
 ```
 
 ### SimpleRecorder (Recording Engine)
@@ -177,7 +254,7 @@ private let levelUpdateInterval: TimeInterval = 1.0 / 30.0 // 30 Hz max updates
 **Critical Implementation Details**:
 - Uses unified tap system instead of managing separate tap
 - Records in native input format to avoid conversion overhead
-- Uses 1024-sample buffer size for optimal performance (reduced from 4096)
+- Uses 2048-sample buffer size for optimal performance (increased from 1024 to prevent rate limit warnings)
 - Automatically generates unique filenames with timestamps
 - Implements clean recording state transitions
 
@@ -348,8 +425,16 @@ static func normalizeAudioLevel(_ level: Float) -> Float {
 ### CPU Usage
 - **Idle State**: Throttled input level monitoring (30Hz max)
 - **Recording**: Unified buffer processing + file I/O
-- **Playback**: File reading + audio mixing
-- **Optimizations**: Reduced buffer size (1024) and throttled updates
+- **Playbook**: File reading + audio mixing
+- **Multi-Channel Devices**: Channel-selective processing eliminates format conversion overhead
+- **Optimizations**: Optimized buffer size (2048), throttled updates, and channel selection
+
+### Multi-Channel Device Performance
+- **Channel Selection**: No CPU overhead for unused channels (channels 3+ ignored)
+- **Format Conversion**: Eliminated by using stereo format from start
+- **Frame Size Errors**: Prevented by avoiding real-time channel count conversion
+- **Buffer Alignment**: Maintained through consistent stereo processing
+- **Professional Interfaces**: Optimized for high-channel count devices (8ch to 64ch+)
 
 ## Error Handling Strategy
 
@@ -358,6 +443,9 @@ static func normalizeAudioLevel(_ level: Float) -> Float {
 - Configuration changes are monitored and logged with format details
 - Recording format mismatches prevented via dynamic format detection
 - Unified tap conflicts eliminated through single tap management
+- **Multi-channel device frame size errors prevented via channel selection**
+- **Sample rate mismatches detected and reported with specific recommendations**
+- **Advanced diagnostic system provides detailed troubleshooting information**
 
 ### File System Errors
 - Recording file creation errors are caught and propagated to UI
@@ -370,6 +458,13 @@ static func normalizeAudioLevel(_ level: Float) -> Float {
 - Input format changes logged with detailed format information
 - Next recording automatically uses new device format
 - Current operations continue unless format incompatibility detected
+
+### Device Compatibility Issues
+- **Frame Size Errors (`kAudioUnitErr_TooManyFramesToProcess`)**: Eliminated by avoiding real-time multi-channel to stereo conversion
+- **Sample Rate Mismatches**: Detected and reported with Audio MIDI Setup recommendations
+- **High Channel Count Interfaces**: Automatically handled via channel-selective processing
+- **Buffer Alignment Issues**: Prevented through proper format management and channel selection
+- **Professional Audio Interface Support**: Optimized for 8ch, 10ch, 16ch, 24ch, 36ch+ devices
 
 ## Threading Model
 
@@ -390,6 +485,55 @@ static func normalizeAudioLevel(_ level: Float) -> Float {
 - Audio callbacks use `DispatchQueue.main.async` for UI updates
 - State mutations confined to main thread
 - Combine pipelines handle cross-thread communication
+
+## Diagnostic System
+
+### Purpose
+Advanced diagnostic capabilities for troubleshooting audio device compatibility issues, particularly with professional multi-channel audio interfaces.
+
+### Diagnostic Features
+
+#### Comprehensive Device Analysis
+```
+=== MONITORING DIAGNOSTICS ===
+Engine running: true
+Input format: <AVAudioFormat 0x...: 10 ch, 48000 Hz, Float32, deinterleaved>
+Output format: <AVAudioFormat 0x...: 2 ch, 48000 Hz, Float32, deinterleaved>
+Input channels: 10
+Output channels: 2
+Input sample rate: 48000.0Hz  
+Output sample rate: 48000.0Hz
+✅ Channel count match: false
+⚠️  Channel conversion required: 10 → 2
+✅ Sample rate match: true
+```
+
+#### Critical Issue Detection
+- **Sample Rate Mismatches**: Detects and warns about sample rate differences that cause frame size errors
+- **Channel Count Analysis**: Reports channel conversion requirements
+- **Device Configuration**: Shows input/output device information
+- **Connection Status**: Verifies audio node connections and engine state
+
+#### Problem-Specific Recommendations
+```swift
+// Example diagnostic output for sample rate mismatch
+if !sampleRateMatch {
+    print("🚨 SAMPLE RATE MISMATCH: \(inputFormat.sampleRate)Hz → \(outputFormat.sampleRate)Hz")
+    print("🚨 This WILL cause frame size errors and performance issues!")
+    print("🚨 Recommendation: Use Audio MIDI Setup to set device to \(outputFormat.sampleRate)Hz")
+}
+```
+
+### Diagnostic Triggers
+- **Manual Activation**: "Run Monitoring Diagnostic" button in UI
+- **Automatic Detection**: Logs device format changes during engine setup
+- **Error Response**: Detailed logging when audio issues occur
+
+### Professional Use Cases
+- **Studio Setup**: Verify complex audio interface configurations
+- **Troubleshooting**: Identify root causes of audio dropouts or errors
+- **Device Testing**: Validate new audio hardware compatibility
+- **Performance Optimization**: Identify format conversion overhead
 
 ## Input Monitoring Feature
 

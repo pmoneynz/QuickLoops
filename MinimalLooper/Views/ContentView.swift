@@ -26,6 +26,13 @@ struct ContentView: View {
                 onToggleMonitoring: viewModel.toggleInputMonitoring
             )
             
+            // Diagnostic Button
+            Button("Run Monitoring Diagnostic") {
+                viewModel.runMonitoringDiagnostic()
+            }
+            .padding(.top, 10)
+            .foregroundColor(.blue)
+            
             // Playback Volume Control
 //            volumeSection
         }

@@ -111,7 +111,7 @@ The application features a clean, minimal design with:
 - **Dynamic Sample Rate Support**: Automatically adapts to any device sample rate
 - **Multi-Channel Recording**: Full support for mono, stereo, and surround configurations
 - **Throttled Level Updates**: 30Hz update rate to prevent performance issues
-- **Buffer Size**: 1024 samples for optimal performance
+- **Buffer Size**: 2048 samples for optimal performance
 
 ### Format Support
 - **Sample Rates**: 44.1kHz, 48kHz, 88.2kHz, 96kHz, 176.4kHz, 192kHz, and any device-native rate
