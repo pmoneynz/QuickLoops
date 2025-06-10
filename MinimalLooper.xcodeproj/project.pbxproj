@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D342B722DF7F66E003B912C /* MIDIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D342B712DF7F66E003B912C /* MIDIManager.swift */; };
+		2D342B742DF7F67F003B912C /* MIDIConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D342B732DF7F67F003B912C /* MIDIConfiguration.swift */; };
+		2D342B762DF7F68C003B912C /* MIDIUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D342B752DF7F68C003B912C /* MIDIUtils.swift */; };
+		2D342B782DF7F69E003B912C /* MIDISettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D342B772DF7F69E003B912C /* MIDISettingsView.swift */; };
 		3D4B9B4E2B5E8A1B00E8F4C2 /* MinimalLooperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4B9B4D2B5E8A1B00E8F4C2 /* MinimalLooperApp.swift */; };
 		3D4B9B502B5E8A1B00E8F4C2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4B9B4F2B5E8A1B00E8F4C2 /* ContentView.swift */; };
 		3D4B9B522B5E8A1C00E8F4C2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D4B9B512B5E8A1C00E8F4C2 /* Assets.xcassets */; };
@@ -22,6 +26,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2D342B712DF7F66E003B912C /* MIDIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIManager.swift; sourceTree = "<group>"; };
+		2D342B732DF7F67F003B912C /* MIDIConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIConfiguration.swift; sourceTree = "<group>"; };
+		2D342B752DF7F68C003B912C /* MIDIUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIUtils.swift; sourceTree = "<group>"; };
+		2D342B772DF7F69E003B912C /* MIDISettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDISettingsView.swift; sourceTree = "<group>"; };
 		3D4B9B4A2B5E8A1B00E8F4C2 /* MinimalLooper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MinimalLooper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D4B9B4D2B5E8A1B00E8F4C2 /* MinimalLooperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinimalLooperApp.swift; sourceTree = "<group>"; };
 		3D4B9B4F2B5E8A1B00E8F4C2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -93,6 +101,7 @@
 			isa = PBXGroup;
 			children = (
 				3D4B9B5D2B5E8A5000E8F4C2 /* SimpleLoopState.swift */,
+				2D342B732DF7F67F003B912C /* MIDIConfiguration.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -103,6 +112,7 @@
 				3D4B9B602B5E8A6A00E8F4C2 /* SimpleAudioEngine.swift */,
 				3D4B9B622B5E8A7A00E8F4C2 /* SimpleRecorder.swift */,
 				3D4B9B642B5E8A8A00E8F4C2 /* SimplePlayer.swift */,
+				2D342B712DF7F66E003B912C /* MIDIManager.swift */,
 			);
 			path = Audio;
 			sourceTree = "<group>";
@@ -113,6 +123,7 @@
 				3D4B9B4F2B5E8A1B00E8F4C2 /* ContentView.swift */,
 				3D4B9B672B5E8AA000E8F4C2 /* TransportControlsView.swift */,
 				3D4B9B692B5E8AB000E8F4C2 /* LevelMeterView.swift */,
+				2D342B772DF7F69E003B912C /* MIDISettingsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -129,6 +140,7 @@
 			isa = PBXGroup;
 			children = (
 				3D4B9B6F2B5E8AD000E8F4C2 /* AudioUtils.swift */,
+				2D342B752DF7F68C003B912C /* MIDIUtils.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -204,12 +216,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				3D4B9B502B5E8A1B00E8F4C2 /* ContentView.swift in Sources */,
+				2D342B742DF7F67F003B912C /* MIDIConfiguration.swift in Sources */,
 				3D4B9B6A2B5E8AB000E8F4C2 /* LevelMeterView.swift in Sources */,
 				3D4B9B632B5E8A7A00E8F4C2 /* SimpleRecorder.swift in Sources */,
+				2D342B722DF7F66E003B912C /* MIDIManager.swift in Sources */,
 				3D4B9B5E2B5E8A5000E8F4C2 /* SimpleLoopState.swift in Sources */,
 				3D4B9B682B5E8AA000E8F4C2 /* TransportControlsView.swift in Sources */,
+				2D342B762DF7F68C003B912C /* MIDIUtils.swift in Sources */,
 				3D4B9B652B5E8A8A00E8F4C2 /* SimplePlayer.swift in Sources */,
 				3D4B9B702B5E8AD000E8F4C2 /* AudioUtils.swift in Sources */,
+				2D342B782DF7F69E003B912C /* MIDISettingsView.swift in Sources */,
 				3D4B9B612B5E8A6A00E8F4C2 /* SimpleAudioEngine.swift in Sources */,
 				3D4B9B6D2B5E8AC000E8F4C2 /* SimpleLooperViewModel.swift in Sources */,
 				3D4B9B4E2B5E8A1B00E8F4C2 /* MinimalLooperApp.swift in Sources */,

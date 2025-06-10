@@ -2,9 +2,9 @@ import Foundation
 
 struct MIDIConfiguration: Codable, Equatable {
     var recordNote: UInt8 = 80    // G#5
-    var playNote: UInt8 = 62      // D4
-    var stopNote: UInt8 = 64      // E4
-    var clearNote: UInt8 = 65     // F4
+    var playNote: UInt8 = 0      // D4
+    var stopNote: UInt8 = 1      // E4
+    var clearNote: UInt8 = 2     // F4
     
     private static let userDefaultsKey = "MIDIConfiguration"
     

@@ -12,38 +12,57 @@ struct MIDISettingsView: View {
     }
     
     var body: some View {
-        NavigationView {
-            VStack(spacing: 24) {
-                // Device Status Section
-                deviceStatusSection
-                
-                // Note Mapping Section
-                noteMappingSection
+        VStack(spacing: 0) {
+            // Custom header bar
+            HStack {
+                Button("Cancel") {
+                    dismiss()
+                }
                 
                 Spacer()
                 
-                // Reset Button
-                resetSection
-            }
-            .padding(24)
-            .navigationTitle("MIDI Settings")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        midiManager.configuration = tempConfiguration
-                        midiManager.saveConfiguration()
-                        dismiss()
-                    }
+                Text("MIDI Settings")
+                    .font(.headline)
                     .fontWeight(.semibold)
+                
+                Spacer()
+                
+                Button("Save") {
+                    midiManager.configuration = tempConfiguration
+                    midiManager.saveConfiguration()
+                    dismiss()
                 }
+                .fontWeight(.semibold)
+                .buttonStyle(.borderedProminent)
             }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
+            .background(Color(NSColor.controlBackgroundColor))
+            .overlay(
+                Rectangle()
+                    .frame(height: 1)
+                    .foregroundColor(Color(NSColor.separatorColor)),
+                alignment: .bottom
+            )
+            
+            // Main content
+            ScrollView {
+                VStack(spacing: 24) {
+                    // Device Status Section
+                    deviceStatusSection
+                    
+                    // Note Mapping Section
+                    noteMappingSection
+                    
+                    // Reset Button
+                    resetSection
+                }
+                .padding(24)
+            }
+            .background(Color(NSColor.controlBackgroundColor).opacity(0.5))
         }
-        .frame(width: 500, height: 400)
+        .frame(minWidth: 300, idealWidth: 350, maxWidth: 400,
+               minHeight: 600, idealHeight: 650, maxHeight: 800)
         .onAppear {
             midiManager.refreshDeviceList()
         }
@@ -223,8 +242,8 @@ struct MIDISettingsView: View {
         switch action {
         case .record: return .red
         case .play: return .green
-        case .stop: return .orange
-        case .clear: return .purple
+        case .stop: return .yellow
+        case .clear: return .orange
         }
     }
     
@@ -236,11 +255,6 @@ struct MIDISettingsView: View {
                 showingResetConfirmation = true
             }
             .foregroundColor(.red)
-            
-            Text("Default mappings: Record (G#4), Play (D4), Stop (E4), Clear (F4)")
-                .font(.caption2)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
         }
         .alert("Reset MIDI Configuration", isPresented: $showingResetConfirmation) {
             Button("Reset", role: .destructive) {

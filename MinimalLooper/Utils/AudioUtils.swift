@@ -11,8 +11,26 @@ struct AudioUtils {
         return paths[0]
     }
     
+    static func getLooperRecordingsDirectory() -> URL {
+        let documentsDirectory = getDocumentsDirectory()
+        let looperDirectory = documentsDirectory.appendingPathComponent("LooperFiles")
+        
+        // Create the directory if it doesn't exist
+        do {
+            try FileManager.default.createDirectory(at: looperDirectory, 
+                                                   withIntermediateDirectories: true, 
+                                                   attributes: nil)
+        } catch {
+            print("Failed to create LooperFiles directory: \(error)")
+            // Fallback to Documents directory if creation fails
+            return documentsDirectory
+        }
+        
+        return looperDirectory
+    }
+    
     static func createLoopFileURL() -> URL {
-        let directory = getDocumentsDirectory()
+        let directory = getLooperRecordingsDirectory()
         let filename = "loop_\(Int(Date().timeIntervalSince1970)).wav"
         return directory.appendingPathComponent(filename)
     }
