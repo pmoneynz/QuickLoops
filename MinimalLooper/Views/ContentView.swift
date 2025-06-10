@@ -2,6 +2,8 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var viewModel = SimpleLooperViewModel()
+    @StateObject private var midiManager = MIDIManager.shared
+    @State private var showingMIDISettings = false
     
     var body: some View {
         VStack(spacing: 30) {
@@ -39,6 +41,19 @@ struct ContentView: View {
         .padding(40)
         .frame(maxWidth: 400, maxHeight: 500)
         .background(Color(NSColor.controlBackgroundColor))
+        .onAppear {
+            setupMIDICallbacks()
+        }
+        .toolbar {
+            ToolbarItem {
+                Button("MIDI Settings") {
+                    showingMIDISettings = true
+                }
+            }
+        }
+        .sheet(isPresented: $showingMIDISettings) {
+            MIDISettingsView(midiManager: midiManager)
+        }
     }
     
     // MARK: - Status Section
@@ -124,6 +139,15 @@ struct ContentView: View {
 //                .foregroundColor(.secondary)
 //        }
 //    }
+    
+    // MARK: - MIDI Integration
+    
+    private func setupMIDICallbacks() {
+        midiManager.onRecord = viewModel.recordButtonPressed
+        midiManager.onPlay = viewModel.playButtonPressed
+        midiManager.onStop = viewModel.stopButtonPressed
+        midiManager.onClear = viewModel.clearButtonPressed
+    }
 }
 
 #Preview {
