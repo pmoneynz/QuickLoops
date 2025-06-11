@@ -2,7 +2,7 @@
 
 ## Project Context
 
-You are implementing MIDI support for **MiniLooper**, a macOS audio looping application built with SwiftUI and AVFoundation. The app has a clean MVVM architecture with sophisticated audio processing.
+You are implementing MIDI support for **QuickLoops**, a macOS audio looping application built with SwiftUI and AVFoundation. The app has a clean MVVM architecture with sophisticated audio processing.
 
 ### Current Architecture Overview
 
@@ -56,7 +56,7 @@ TransportControlsView(
 
 ### File Structure
 ```
-MinimalLooper/
+QuickLoops/
 ├── Audio/
 │   └── MIDIManager.swift          # Core MIDI service
 ├── Models/
@@ -253,7 +253,7 @@ Add new files to Xcode project build phases:
 1. **Setup Pattern**:
    ```swift
    private func setupMIDI() {
-       var status = MIDIClientCreateWithBlock("MiniLooper" as CFString, &midiClient) { _ in }
+       var status = MIDIClientCreateWithBlock("QuickLoops" as CFString, &midiClient) { _ in }
        status = MIDIInputPortCreateWithBlock(midiClient, "Input" as CFString, &inputPort) { packetList, srcConnRefCon in
            // Process MIDI packets here
        }

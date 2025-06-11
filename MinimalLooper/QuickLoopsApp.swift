@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct MinimalLooperApp: App {
+struct QuickLoopsApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()

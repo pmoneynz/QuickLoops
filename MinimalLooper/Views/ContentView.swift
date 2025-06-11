@@ -29,14 +29,34 @@ struct ContentView: View {
             )
             
             // Diagnostic Button
-            Button("Run Monitoring Diagnostic") {
-                viewModel.runMonitoringDiagnostic()
-            }
-            .padding(.top, 10)
-            .foregroundColor(.blue)
+//            Button("Run Monitoring Diagnostic") {
+//                viewModel.runMonitoringDiagnostic()
+//            }
+//            .padding(.top, 10)
+//            .foregroundColor(.blue)
             
             // Playback Volume Control
 //            volumeSection
+            
+            // Spacer to push product name to bottom
+            Spacer()
+            
+            // Product Name and Version
+            ZStack{
+                // Centered Product Name
+                Text("QuickLoops")
+                    .font(.custom("CircularStd-Bold", size: 24))
+                    .foregroundColor(.primary)
+                
+                // Right-aligned Version
+                HStack {
+                    Spacer()
+                    Text("V. 0.14 Beta")
+                        .font(.system(size: 10))
+                        .foregroundColor(.primary)
+                }
+            }
+//            .padding(.bottom)
         }
         .padding(40)
         .frame(maxWidth: 400, maxHeight: 500)

@@ -107,7 +107,7 @@ class MIDIManager: ObservableObject {
     
     private func setupMIDI() {
         // Create MIDI client
-        let clientStatus = MIDIClientCreateWithBlock("MiniLooper" as CFString, &midiClient) { notification in
+        let clientStatus = MIDIClientCreateWithBlock("QuickLoops" as CFString, &midiClient) { notification in
             // Handle MIDI system notifications
             self.handleMIDINotification(notification)
         }
@@ -120,7 +120,7 @@ class MIDIManager: ObservableObject {
         // Create input port
         let portStatus = MIDIInputPortCreateWithBlock(
             midiClient,
-            "MiniLooperInput" as CFString,
+            "QuickLoopsInput" as CFString,
             &inputPort
         ) { [weak self] packetList, srcConnRefCon in
             self?.handleMIDIPacketList(packetList)

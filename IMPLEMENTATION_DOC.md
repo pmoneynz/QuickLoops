@@ -1,8 +1,8 @@
-# MiniLooper - Implementation Documentation
+# QuickLoops - Implementation Documentation
 
 ## Overview
 
-MiniLooper is a macOS audio looping application built with SwiftUI and AVFoundation. It provides a simple interface for recording audio input and looping it back for real-time performance. The app follows an MVVM architecture with a clear separation between audio processing, state management, and user interface.
+QuickLoops is a macOS audio looping application built with SwiftUI and AVFoundation. It provides a simple interface for recording audio input and looping it back for real-time performance. The app follows an MVVM architecture with a clear separation between audio processing, state management, and user interface.
 
 ## Architecture Overview
 

@@ -1,4 +1,4 @@
-# 🎵 MiniLooper
+# 🎵 QuickLoops
 
 A minimal, essential audio looper application for macOS built with SwiftUI and AVFoundation. This application focuses on core looping functionality with a sophisticated unified audio processing system, providing a clean and intuitive interface for recording and playing audio loops.
 
@@ -29,7 +29,7 @@ A minimal, essential audio looper application for macOS built with SwiftUI and A
 
 ### Project Structure
 ```
-MinimalLooper/
+QuickLoops/
 ├── Models/
 │   └── SimpleLoopState.swift          # Comprehensive state management
 ├── Audio/
@@ -61,8 +61,8 @@ MinimalLooper/
 - Microphone access permission
 
 ### Building and Running
-1. Open `MinimalLooper.xcodeproj` in Xcode
-2. Select the MinimalLooper scheme
+1. Open `QuickLoops.xcodeproj` in Xcode
+2. Select the QuickLoops scheme
 3. Build and run (⌘+R)
 4. Grant microphone permission when prompted
 

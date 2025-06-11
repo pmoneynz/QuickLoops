@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,7 +11,7 @@
 		2D342B742DF7F67F003B912C /* MIDIConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D342B732DF7F67F003B912C /* MIDIConfiguration.swift */; };
 		2D342B762DF7F68C003B912C /* MIDIUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D342B752DF7F68C003B912C /* MIDIUtils.swift */; };
 		2D342B782DF7F69E003B912C /* MIDISettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D342B772DF7F69E003B912C /* MIDISettingsView.swift */; };
-		3D4B9B4E2B5E8A1B00E8F4C2 /* MinimalLooperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4B9B4D2B5E8A1B00E8F4C2 /* MinimalLooperApp.swift */; };
+		3D4B9B4E2B5E8A1B00E8F4C2 /* QuickLoopsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4B9B4D2B5E8A1B00E8F4C2 /* QuickLoopsApp.swift */; };
 		3D4B9B502B5E8A1B00E8F4C2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4B9B4F2B5E8A1B00E8F4C2 /* ContentView.swift */; };
 		3D4B9B522B5E8A1C00E8F4C2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D4B9B512B5E8A1C00E8F4C2 /* Assets.xcassets */; };
 		3D4B9B552B5E8A1C00E8F4C2 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D4B9B542B5E8A1C00E8F4C2 /* Preview Assets.xcassets */; };
@@ -31,11 +31,11 @@
 		2D342B752DF7F68C003B912C /* MIDIUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIUtils.swift; sourceTree = "<group>"; };
 		2D342B772DF7F69E003B912C /* MIDISettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDISettingsView.swift; sourceTree = "<group>"; };
 		3D4B9B4A2B5E8A1B00E8F4C2 /* MinimalLooper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MinimalLooper.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		3D4B9B4D2B5E8A1B00E8F4C2 /* MinimalLooperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinimalLooperApp.swift; sourceTree = "<group>"; };
+		3D4B9B4D2B5E8A1B00E8F4C2 /* QuickLoopsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickLoopsApp.swift; sourceTree = "<group>"; };
 		3D4B9B4F2B5E8A1B00E8F4C2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		3D4B9B512B5E8A1C00E8F4C2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3D4B9B542B5E8A1C00E8F4C2 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		3D4B9B562B5E8A1C00E8F4C2 /* MinimalLooper.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MinimalLooper.entitlements; sourceTree = "<group>"; };
+		3D4B9B562B5E8A1C00E8F4C2 /* QuickLoops.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = QuickLoops.entitlements; sourceTree = "<group>"; };
 		3D4B9B5D2B5E8A5000E8F4C2 /* SimpleLoopState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleLoopState.swift; sourceTree = "<group>"; };
 		3D4B9B602B5E8A6A00E8F4C2 /* SimpleAudioEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleAudioEngine.swift; sourceTree = "<group>"; };
 		3D4B9B622B5E8A7A00E8F4C2 /* SimpleRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleRecorder.swift; sourceTree = "<group>"; };
@@ -45,6 +45,10 @@
 		3D4B9B6C2B5E8AC000E8F4C2 /* SimpleLooperViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleLooperViewModel.swift; sourceTree = "<group>"; };
 		3D4B9B6F2B5E8AD000E8F4C2 /* AudioUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioUtils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		2DA97FAF2DFA35B800CF00D4 /* Font */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Font; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		3D4B9B472B5E8A1B00E8F4C2 /* Frameworks */ = {
@@ -76,14 +80,15 @@
 		3D4B9B4C2B5E8A1B00E8F4C2 /* MinimalLooper */ = {
 			isa = PBXGroup;
 			children = (
-				3D4B9B4D2B5E8A1B00E8F4C2 /* MinimalLooperApp.swift */,
+				3D4B9B4D2B5E8A1B00E8F4C2 /* QuickLoopsApp.swift */,
 				3D4B9B5C2B5E8A4200E8F4C2 /* Models */,
 				3D4B9B5F2B5E8A5E00E8F4C2 /* Audio */,
 				3D4B9B662B5E8A9400E8F4C2 /* Views */,
 				3D4B9B6B2B5E8AB600E8F4C2 /* ViewModels */,
 				3D4B9B6E2B5E8AC700E8F4C2 /* Utils */,
 				3D4B9B512B5E8A1C00E8F4C2 /* Assets.xcassets */,
-				3D4B9B562B5E8A1C00E8F4C2 /* MinimalLooper.entitlements */,
+				2DA97FAF2DFA35B800CF00D4 /* Font */,
+				3D4B9B562B5E8A1C00E8F4C2 /* QuickLoops.entitlements */,
 				3D4B9B532B5E8A1C00E8F4C2 /* Preview Content */,
 			);
 			path = MinimalLooper;
@@ -160,6 +165,9 @@
 			);
 			dependencies = (
 			);
+			fileSystemSynchronizedGroups = (
+				2DA97FAF2DFA35B800CF00D4 /* Font */,
+			);
 			name = MinimalLooper;
 			productName = MinimalLooper;
 			productReference = 3D4B9B4A2B5E8A1B00E8F4C2 /* MinimalLooper.app */;
@@ -228,7 +236,7 @@
 				2D342B782DF7F69E003B912C /* MIDISettingsView.swift in Sources */,
 				3D4B9B612B5E8A6A00E8F4C2 /* SimpleAudioEngine.swift in Sources */,
 				3D4B9B6D2B5E8AC000E8F4C2 /* SimpleLooperViewModel.swift in Sources */,
-				3D4B9B4E2B5E8A1B00E8F4C2 /* MinimalLooperApp.swift in Sources */,
+				3D4B9B4E2B5E8A1B00E8F4C2 /* QuickLoopsApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -362,7 +370,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = MinimalLooper/MinimalLooper.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MinimalLooper/QuickLoops.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -372,17 +380,17 @@
 				DEVELOPMENT_TEAM = F9J5Q53PP9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = MiniLooper;
+				INFOPLIST_KEY_CFBundleDisplayName = QuickLoops;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "MinimalLooper needs microphone access to record audio loops.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "QuickLoops needs microphone access to record audio loops.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
-				MARKETING_VERSION = 0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.pmoneymusic.minimallooper;
+				MARKETING_VERSION = 0.14;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pmoneymusic.quickloops;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -394,7 +402,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = MinimalLooper/MinimalLooper.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MinimalLooper/QuickLoops.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -404,17 +412,17 @@
 				DEVELOPMENT_TEAM = F9J5Q53PP9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = MiniLooper;
+				INFOPLIST_KEY_CFBundleDisplayName = QuickLoops;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "MinimalLooper needs microphone access to record audio loops.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "QuickLoops needs microphone access to record audio loops.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
-				MARKETING_VERSION = 0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.pmoneymusic.minimallooper;
+				MARKETING_VERSION = 0.14;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pmoneymusic.quickloops;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
