@@ -19,9 +19,7 @@ struct ContentView: View {
                 onRecord: viewModel.recordButtonPressed,
                 onPlay: viewModel.playButtonPressed,
                 onStop: viewModel.stopButtonPressed,
-                onClear: viewModel.clearButtonPressed,
-                onSave: viewModel.showSaveDialog,
-                onShowLibrary: viewModel.showLoopLibrary
+                onClear: viewModel.clearButtonPressed
             )
             
             // Input Monitoring Toggle (standalone)
@@ -53,7 +51,7 @@ struct ContentView: View {
                 // Right-aligned Version
                 HStack {
                     Spacer()
-                    Text("V. 0.14 Beta")
+                    Text("V. 0.15 Beta")
                         .font(.system(size: 10))
                         .foregroundColor(.primary)
                 }
@@ -67,6 +65,26 @@ struct ContentView: View {
             setupMIDICallbacks()
         }
         .toolbar {
+            ToolbarItem {
+                HStack {
+                    Button {
+                        viewModel.showSaveDialog()
+                    } label: {
+                        Image(systemName: "square.and.arrow.down")
+                    }
+                    .disabled(!viewModel.loopState.canSave)
+                    .keyboardShortcut("s", modifiers: [.command])
+                    
+                    Button {
+                        viewModel.showLoopLibrary()
+                    } label: {
+                        Image(systemName: "folder.fill")
+                    }
+                    .disabled(!viewModel.loopState.canLoad)
+                    .keyboardShortcut("o", modifiers: [.command])
+                }
+            }
+            
             ToolbarItem {
                 Button {
                     showingMIDISettings = true
