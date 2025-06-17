@@ -4,6 +4,7 @@ import Combine
 
 class SimpleLooperViewModel: ObservableObject {
     @Published var loopState = SimpleLoopState()
+    @Published var loopLibrary = LoopLibrary()
     
     private let audioEngine = SimpleAudioEngine()
     private var recorder: SimpleRecorder?
@@ -86,13 +87,18 @@ class SimpleLooperViewModel: ObservableObject {
     }
     
     func setPlaybackVolume(_ volume: Float) {
-        loopState.playbackVolume = volume
+        DispatchQueue.main.async {
+            self.loopState.playbackVolume = volume
+        }
         audioEngine.setPlaybackVolume(volume)
     }
     
     func toggleInputMonitoring() {
-        loopState.inputMonitoringEnabled.toggle()
-        audioEngine.setInputMonitoring(enabled: loopState.inputMonitoringEnabled)
+        let newValue = !loopState.inputMonitoringEnabled
+        DispatchQueue.main.async {
+            self.loopState.inputMonitoringEnabled = newValue
+        }
+        audioEngine.setInputMonitoring(enabled: newValue)
     }
     
     // MARK: - Private Implementation
@@ -102,8 +108,10 @@ class SimpleLooperViewModel: ObservableObject {
             recorder = audioEngine.createRecorder()
             try recorder?.startRecording()
             
-            loopState.transportState = .recording
-            loopState.isRecording = true
+            DispatchQueue.main.async {
+                self.loopState.transportState = .recording
+                self.loopState.isRecording = true
+            }
         } catch {
             print("❌ [ERROR] Failed to start recording: \(error)")
             print("❌ [ERROR] Error details: \(error.localizedDescription)")
@@ -114,8 +122,10 @@ class SimpleLooperViewModel: ObservableObject {
     private func stopRecording() {
         recorder?.stopRecording()
         
-        loopState.transportState = .stopped
-        loopState.isRecording = false
+        DispatchQueue.main.async {
+            self.loopState.transportState = .stopped
+            self.loopState.isRecording = false
+        }
         
         if let recordingURL = recorder?.getRecordingURL() {
             let fileExists = FileManager.default.fileExists(atPath: recordingURL.path)
@@ -128,8 +138,10 @@ class SimpleLooperViewModel: ObservableObject {
                 }
             }
             
-            loopState.fileURL = recordingURL
-            loopState.hasAudio = true
+            DispatchQueue.main.async {
+                self.loopState.fileURL = recordingURL
+                self.loopState.hasAudio = true
+            }
         } else {
             print("❌ [ERROR] No recording URL found!")
         }
@@ -156,7 +168,9 @@ class SimpleLooperViewModel: ObservableObject {
             // Set the current volume
             player?.setVolume(loopState.playbackVolume)
             
-            loopState.transportState = .playing
+            DispatchQueue.main.async {
+                self.loopState.transportState = .playing
+            }
             print("Playback started")
         } catch {
             print("Failed to start playback: \(error)")
@@ -166,7 +180,9 @@ class SimpleLooperViewModel: ObservableObject {
     
     private func stopPlayback() {
         player?.stopPlaying()
-        loopState.transportState = .stopped
+        DispatchQueue.main.async {
+            self.loopState.transportState = .stopped
+        }
         print("Playback stopped")
     }
     
@@ -179,9 +195,12 @@ class SimpleLooperViewModel: ObservableObject {
         recorder?.clearRecording()
         
         // Reset state
-        loopState.hasAudio = false
-        loopState.fileURL = nil
-        loopState.transportState = .stopped
+        DispatchQueue.main.async {
+            self.loopState.hasAudio = false
+            self.loopState.fileURL = nil
+            self.loopState.currentSavedLoop = nil
+            self.loopState.transportState = .stopped
+        }
         
         print("Loop cleared")
     }
@@ -189,5 +208,81 @@ class SimpleLooperViewModel: ObservableObject {
     func runMonitoringDiagnostic() {
         print("🔍 [DIAGNOSTIC] Running monitoring diagnostic...")
         audioEngine.diagnoseMonitoringSetup()
+    }
+    
+    // MARK: - Save/Load Functionality
+    
+    func saveCurrentLoop(as name: String) throws {
+        guard let currentFileURL = loopState.fileURL, 
+              loopState.hasAudio else {
+            throw LoopError.noAudioToSave
+        }
+        
+        // Check disk space before saving
+        try LoopFileManager.checkDiskSpaceForFile(at: currentFileURL)
+        
+        let savedLoop = try LoopFileManager.saveTemporaryLoopAs(name: name, 
+                                                               from: currentFileURL)
+        loopLibrary.saveLoop(savedLoop)
+        
+        // Update state to reflect saved status - ensure on main thread
+        DispatchQueue.main.async {
+            self.loopState.currentSavedLoop = savedLoop
+        }
+        
+        print("Successfully saved loop: \(name)")
+    }
+
+    func loadLoop(_ savedLoop: SavedLoop) throws {
+        // Stop current playback/recording
+        if loopState.transportState == .playing {
+            stopPlayback()
+        } else if loopState.transportState == .recording {
+            stopRecording()
+        }
+        
+        // Clear current loop state
+        clearLoopState()
+        
+        // Validate file exists
+        guard LoopFileManager.validateLoopFile(savedLoop.fileURL) else {
+            throw LoopError.fileNotFound
+        }
+        
+        // Load saved loop - ensure all UI updates happen on main thread
+        DispatchQueue.main.async {
+            self.loopState.fileURL = savedLoop.fileURL
+            self.loopState.hasAudio = true
+            self.loopState.currentSavedLoop = savedLoop
+        }
+        
+        print("Successfully loaded loop: \(savedLoop.name)")
+    }
+    
+    func showSaveDialog() {
+        guard loopState.canSave else { return }
+        DispatchQueue.main.async {
+            self.loopState.showingSaveDialog = true
+        }
+    }
+    
+    func showLoopLibrary() {
+        DispatchQueue.main.async {
+            self.loopState.showingLoopLibrary = true
+        }
+    }
+    
+    private func clearLoopState() {
+        // Clear the audio file
+        player?.clearAudioFile()
+        recorder?.clearRecording()
+        
+        // Reset state - ensure on main thread
+        DispatchQueue.main.async {
+            self.loopState.hasAudio = false
+            self.loopState.fileURL = nil
+            self.loopState.currentSavedLoop = nil
+            self.loopState.transportState = .stopped
+        }
     }
 } 

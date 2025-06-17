@@ -19,7 +19,9 @@ struct ContentView: View {
                 onRecord: viewModel.recordButtonPressed,
                 onPlay: viewModel.playButtonPressed,
                 onStop: viewModel.stopButtonPressed,
-                onClear: viewModel.clearButtonPressed
+                onClear: viewModel.clearButtonPressed,
+                onSave: viewModel.showSaveDialog,
+                onShowLibrary: viewModel.showLoopLibrary
             )
             
             // Input Monitoring Toggle (standalone)
@@ -66,13 +68,37 @@ struct ContentView: View {
         }
         .toolbar {
             ToolbarItem {
-                Button("MIDI Settings") {
+                Button {
                     showingMIDISettings = true
+                } label: {
+                    Image(systemName: "gearshape")
                 }
             }
         }
         .sheet(isPresented: $showingMIDISettings) {
             MIDISettingsView(midiManager: midiManager)
+        }
+        .sheet(isPresented: $viewModel.loopState.showingSaveDialog) {
+            SaveLoopView(
+                isPresented: $viewModel.loopState.showingSaveDialog,
+                currentFileURL: viewModel.loopState.fileURL,
+                onSave: { name in
+                    try viewModel.saveCurrentLoop(as: name)
+                }
+            )
+        }
+        .sheet(isPresented: $viewModel.loopState.showingLoopLibrary) {
+            LoopLibraryView(
+                isPresented: $viewModel.loopState.showingLoopLibrary,
+                onLoadLoop: { loop in
+                    do {
+                        try viewModel.loadLoop(loop)
+                    } catch {
+                        print("Failed to load loop: \(error)")
+                        // TODO: Show error alert
+                    }
+                }
+            )
         }
     }
     

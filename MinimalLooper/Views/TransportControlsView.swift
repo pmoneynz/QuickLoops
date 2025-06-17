@@ -7,6 +7,8 @@ struct TransportControlsView: View {
     let onPlay: () -> Void
     let onStop: () -> Void
     let onClear: () -> Void
+    let onSave: () -> Void
+    let onShowLibrary: () -> Void
     
     private let buttonSize: CGFloat = 60
     
@@ -78,6 +80,45 @@ struct TransportControlsView: View {
                 .keyboardShortcut(.delete, modifiers: [.command])
             }
             
+            // Save/Load buttons row
+            HStack(spacing: 20) {
+                // Save Button
+                Button(action: onSave) {
+                    HStack(spacing: 6) {
+                        Image(systemName: loopState.isCurrentLoopSaved ? "checkmark.circle.fill" : "square.and.arrow.down")
+                            .font(.system(size: 16, weight: .medium))
+                        Text(loopState.isCurrentLoopSaved ? "Saved" : "Save")
+                            .font(.system(size: 14, weight: .medium))
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(saveButtonColor)
+                    .cornerRadius(20)
+                }
+                .buttonStyle(.plain)
+                .disabled(!saveButtonEnabled)
+                .keyboardShortcut("s", modifiers: [.command])
+                
+                // Library Button
+                Button(action: onShowLibrary) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "folder.fill")
+                            .font(.system(size: 16, weight: .medium))
+                        Text("Library")
+                            .font(.system(size: 14, weight: .medium))
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(libraryButtonColor)
+                    .cornerRadius(20)
+                }
+                .buttonStyle(.plain)
+                .disabled(!libraryButtonEnabled)
+                .keyboardShortcut("o", modifiers: [.command])
+            }
+            
             // Button labels
 //            HStack(spacing: 20) {
 //                Text("Record")
@@ -121,6 +162,14 @@ struct TransportControlsView: View {
         loopState.canClear
     }
     
+    private var saveButtonEnabled: Bool {
+        loopState.canSave
+    }
+    
+    private var libraryButtonEnabled: Bool {
+        loopState.canLoad
+    }
+    
     // MARK: - Button Icons
     
     private var recordButtonIcon: String {
@@ -155,6 +204,17 @@ struct TransportControlsView: View {
         clearButtonEnabled ? .orange : .gray
     }
     
+    private var saveButtonColor: Color {
+        if loopState.isCurrentLoopSaved {
+            return .green
+        }
+        return saveButtonEnabled ? .blue : .gray
+    }
+    
+    private var libraryButtonColor: Color {
+        libraryButtonEnabled ? .purple : .gray
+    }
+    
     // MARK: - Button Scales
     
     private var recordButtonScale: CGFloat {
@@ -187,7 +247,9 @@ struct TransportControlsView: View {
             onRecord: {},
             onPlay: {},
             onStop: {},
-            onClear: {}
+            onClear: {},
+            onSave: {},
+            onShowLibrary: {}
         )
         
         // Recording state
@@ -201,7 +263,9 @@ struct TransportControlsView: View {
             onRecord: {},
             onPlay: {},
             onStop: {},
-            onClear: {}
+            onClear: {},
+            onSave: {},
+            onShowLibrary: {}
         )
         
         // Playing state
@@ -215,7 +279,9 @@ struct TransportControlsView: View {
             onRecord: {},
             onPlay: {},
             onStop: {},
-            onClear: {}
+            onClear: {},
+            onSave: {},
+            onShowLibrary: {}
         )
     }
     .padding()

@@ -61,4 +61,23 @@ struct AudioUtils {
         let normalizedDB = max(-60.0, dbLevel) // Clip at -60dB
         return (normalizedDB + 60.0) / 60.0 // Convert to 0.0-1.0 range
     }
+    
+    // MARK: - Export Functionality
+    
+    static func exportLoop(_ loop: SavedLoop, format: AudioFormat = .wav) throws -> URL {
+        // For now, we'll just copy the WAV file
+        // Future enhancement: format conversion
+        let tempDirectory = FileManager.default.temporaryDirectory
+        let exportURL = tempDirectory.appendingPathComponent("\(loop.name).wav")
+        
+        try LoopFileManager.copyLoopFile(from: loop.fileURL, to: exportURL)
+        return exportURL
+    }
+    
+    enum AudioFormat {
+        case wav
+        case aiff
+        case mp3
+        case m4a
+    }
 } 

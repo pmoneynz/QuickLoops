@@ -15,6 +15,11 @@ class SimpleLoopState: ObservableObject {
     @Published var playbackVolume: Float = 1.0
     @Published var inputMonitoringEnabled: Bool = false
     
+    // Save/Load state properties
+    @Published var currentSavedLoop: SavedLoop?
+    @Published var showingSaveDialog = false
+    @Published var showingLoopLibrary = false
+    
     // Helper computed properties
     var canRecord: Bool {
         return transportState == .stopped
@@ -30,5 +35,18 @@ class SimpleLoopState: ObservableObject {
     
     var canClear: Bool {
         return hasAudio && transportState == .stopped
+    }
+    
+    // Save/Load computed properties
+    var canSave: Bool { 
+        return hasAudio && transportState == .stopped && currentSavedLoop == nil 
+    }
+
+    var isCurrentLoopSaved: Bool {
+        return currentSavedLoop != nil
+    }
+
+    var canLoad: Bool {
+        return transportState == .stopped
     }
 } 
