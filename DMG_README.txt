@@ -9,7 +9,7 @@ INSTALLATION
 
 SYSTEM REQUIREMENTS
 -------------------
-• macOS 14.0 Sonoma or later
+• macOS 13.0 Ventura or later
 • Microphone or audio input device
 • Audio output (speakers/headphones)
 
@@ -28,12 +28,21 @@ QUICK START GUIDE
    5. Click Record again to stop recording and begin automatic playback
 
 ▶️ PLAYBACK CONTROLS & HOTKEYS
-   • Record button (Return): Recording Start/stop
-   • Play button (Spacebar): Start/stop playback
-   • Stop button (Spacebar): Stop playback
+   • Record button (Return): Start/stop recording
+   • Play button (Spacebar): Start/stop playback (when not recording)
+   • Stop button (Spacebar): Stop recording (when recording is active)
    • Clear button (Cmd+Delete): Delete loop and start over
    • Loop plays continuously until manually stopped
 
+   Note: Spacebar intelligently switches between Play and Stop functions
+   depending on whether you're currently recording or not.
+
+💾 SAVE & LOAD LOOPS
+   • Save button (Cmd+S): Save current loop to library
+   • Load button (Cmd+O): Open loop library to load saved loops
+   • Loops are saved with custom names and dates
+   • Preview loops before loading them
+   • Organize your loop collection
 
 MIDI MAPPING
 ------------

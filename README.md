@@ -11,15 +11,17 @@ A minimal, essential audio looper application for macOS built with SwiftUI and A
 - **Continuous Loop Playback**: Loops play continuously until manually stopped
 
 ### Transport Controls
-- **Record Button (●)**: Start/stop recording
-- **Play Button (▶)**: Start/stop playback (available when loop exists)
-- **Stop Button (■)**: Stop current recording or playback
-- **Clear Button (🗑)**: Delete current loop (only when stopped)
+- **Record Button (●)**: Start/stop recording [Return]
+- **Play Button (▶)**: Start/stop playback (available when loop exists) [Space]
+- **Stop Button (■)**: Stop current recording or playback [Space when recording]
+- **Clear Button (🗑)**: Delete current loop (only when stopped) [Cmd+Delete]
 
 ### Audio Features
 - **Input Monitoring Toggle**: Control whether input audio is heard through speakers/headphones
 - **Real-time Level Meter**: Visual feedback of incoming audio levels (first channel)
-- **Playback Volume Control**: Slider to control loop playback volume (currently commented out in UI)
+- **MIDI Integration**: Full MIDI controller support with customizable mappings
+- **Keyboard Shortcuts**: Essential transport controls with tooltips
+- **Loop Library**: Save and load loops with file management
 - **Native Format Recording**: Records in device's native format without conversion
 - **Multi-Channel Support**: Supports any channel configuration (mono, stereo, surround)
 - **Variable Sample Rate Support**: Adapts to any sample rate (44.1kHz, 48kHz, 96kHz, 192kHz, etc.)
@@ -68,11 +70,22 @@ QuickLoops/
 
 ### Usage
 1. **Input Monitoring**: Use the "Input Monitor" checkbox to control live audio feedback
-2. **Recording**: Click the red Record button to start recording
+2. **Recording**: Click the red Record button or press Return to start recording
 3. **Automatic Playback**: Recording automatically transitions to playback when stopped
-4. **Manual Playback**: Use the green Play button to start/stop playback
-5. **Stop**: Use the yellow Stop button to stop recording or playback
-6. **Clear**: Use the orange Clear button to delete the current loop
+4. **Manual Playback**: Use the green Play button or press Space to start/stop playback
+5. **Stop**: Use the yellow Stop button or press Space (when recording) to stop
+6. **Clear**: Use the orange Clear button or press Cmd+Delete to delete the current loop
+7. **Save/Load**: Use Cmd+S to save loops and Cmd+O to open the loop library
+8. **MIDI Control**: Configure MIDI mappings in Settings for hardware controller integration
+
+### Keyboard Shortcuts
+- **Record**: Return (Enter) - Start/stop recording
+- **Play**: Space - Start/stop playback (when not recording)
+- **Stop**: Space - Stop recording (when recording is active)
+- **Clear**: Cmd+Delete - Delete current loop
+- **Save**: Cmd+S - Open save dialog for current loop
+- **Load**: Cmd+O - Open loop library
+- **MIDI Settings**: Access via gear icon in toolbar
 
 ## 🎛️ User Interface
 
@@ -184,18 +197,14 @@ When monitoring is disabled, only the monitoring path volume is muted; recording
 This minimal version intentionally excludes:
 - Multiple loop slots
 - Overdubbing/layering
-- MIDI integration
 - Click track/metronome
 - Waveform visualization
 - Audio effects (EQ, reverb, etc.)
 - File import/export
-- Keyboard shortcuts
-- Settings panel
 - BPM detection
 - Quantization
 - Audio device selection UI
 - Loop trimming/editing
-- Session save/load
 
 ## 🧪 Testing
 
@@ -267,7 +276,7 @@ This is a minimal implementation focused on core functionality. When contributin
 ## Installation
 
 1. Clone the repository
-2. Open `MinimalLooper.xcodeproj` in Xcode
+2. Open `QuickLoops.xcodeproj` in Xcode
 3. Build and run the project (⌘+R)
 
 ## Usage
@@ -318,21 +327,33 @@ Input Device → Input Node → [Unified Tap] → Level Calc + Recording
 ## File Structure
 
 ```
-MinimalLooper/
+QuickLoops/
 ├── Audio/
 │   ├── SimpleAudioEngine.swift    # Unified tap engine with monitoring
 │   ├── SimpleRecorder.swift       # Native format recording
-│   └── SimplePlayer.swift         # Seamless loop playback
+│   ├── SimplePlayer.swift         # Seamless loop playback
+│   ├── LoopPreviewEngine.swift    # Loop library preview engine
+│   └── MIDIManager.swift          # MIDI controller integration
 ├── Models/
-│   └── SimpleLoopState.swift      # State with monitoring control
+│   ├── SimpleLoopState.swift      # State with monitoring control
+│   ├── SavedLoop.swift            # Loop file metadata
+│   ├── LoopLibrary.swift          # Loop collection management
+│   └── MIDIConfiguration.swift    # MIDI mapping settings
 ├── ViewModels/
-│   └── SimpleLooperViewModel.swift # Business logic & monitoring actions
+│   ├── SimpleLooperViewModel.swift # Business logic & monitoring actions
+│   └── LoopLibraryViewModel.swift  # Loop library management
 ├── Views/
 │   ├── ContentView.swift          # Main application interface
 │   ├── LevelMeterView.swift       # Level meter & monitoring components
-│   └── TransportControlsView.swift # Transport control buttons
+│   ├── TransportControlsView.swift # Transport buttons with tooltips
+│   ├── SaveLoopView.swift         # Save loop dialog
+│   ├── LoopLibraryView.swift      # Loop library browser
+│   ├── LoopRowView.swift          # Individual loop list item
+│   └── MIDISettingsView.swift     # MIDI configuration interface
 └── Utils/
-    └── AudioUtils.swift           # Audio utility functions
+    ├── AudioUtils.swift           # Audio utility functions
+    ├── LoopFileManager.swift      # Loop file management
+    └── MIDIUtils.swift            # MIDI helper functions
 ```
 
 ## Contributing
