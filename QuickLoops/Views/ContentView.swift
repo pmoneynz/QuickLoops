@@ -49,12 +49,8 @@ struct ContentView: View {
                     .foregroundColor(.primary)
                 
                 // Right-aligned Version
-                HStack {
-                    Spacer()
-                    Text("V. 0.15 Beta")
-                        .font(.system(size: 10))
-                        .foregroundColor(.primary)
-                }
+//
+                 
             }
 //            .padding(.bottom)
         }

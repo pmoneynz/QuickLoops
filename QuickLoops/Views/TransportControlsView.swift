@@ -28,6 +28,7 @@ struct TransportControlsView: View {
                 .disabled(!recordButtonEnabled)
                 .animation(.easeInOut(duration: 0.2), value: loopState.transportState)
                 .keyboardShortcut(.return, modifiers: [])
+                .help("Record [Return]")
                 
                 // Play Button
                 Button(action: onPlay) {
@@ -42,7 +43,8 @@ struct TransportControlsView: View {
                 .buttonStyle(.plain)
                 .disabled(!playButtonEnabled)
                 .animation(.easeInOut(duration: 0.2), value: loopState.transportState)
-                .keyboardShortcut(.space, modifiers: [])
+                .keyboardShortcut(playButtonKeyboardShortcut, modifiers: [])
+                .help("Play [Space]")
                 
                 // Stop Button
                 Button(action: onStop) {
@@ -57,7 +59,8 @@ struct TransportControlsView: View {
                 .buttonStyle(.plain)
                 .disabled(!stopButtonEnabled)
                 .animation(.easeInOut(duration: 0.2), value: loopState.transportState)
-                .keyboardShortcut(".", modifiers: [.command])
+                .keyboardShortcut(stopButtonKeyboardShortcut, modifiers: [])
+                .help("Stop [Space]")
                 
                 // Clear Button
                 Button(action: onClear) {
@@ -73,6 +76,7 @@ struct TransportControlsView: View {
                 .disabled(!clearButtonEnabled)
                 .animation(.easeInOut(duration: 0.2), value: loopState.transportState)
                 .keyboardShortcut(.delete, modifiers: [.command])
+                .help("Clear [Cmd+Delete]")
             }
         }
     }
@@ -145,6 +149,18 @@ struct TransportControlsView: View {
     
     private var clearButtonScale: CGFloat {
         clearButtonEnabled ? 1.0 : 1.0
+    }
+    
+    // MARK: - Keyboard Shortcuts
+    
+    private var playButtonKeyboardShortcut: KeyEquivalent {
+        // Only use space for play when not recording
+        loopState.transportState != .recording ? .space : KeyEquivalent("p")
+    }
+    
+    private var stopButtonKeyboardShortcut: KeyEquivalent {
+        // Use space for stop when recording, otherwise use a different key
+        loopState.transportState == .recording ? .space : KeyEquivalent(".")
     }
 }
 
