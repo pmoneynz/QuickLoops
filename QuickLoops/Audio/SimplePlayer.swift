@@ -44,6 +44,22 @@ class SimplePlayer: ObservableObject {
         print("Playback stopped")
     }
     
+    func restartPlaying() throws {
+        guard audioFile != nil else { return }
+        
+        // Stop current playback if playing
+        if isPlaying {
+            playerNode.stop()
+            isPlaying = false
+        }
+        
+        // Reschedule from the beginning and start
+        scheduleLoop()
+        playerNode.play()
+        isPlaying = true
+        print("Playback restarted from beginning")
+    }
+    
     private func scheduleLoop() {
         guard let audioFile = audioFile else { return }
         

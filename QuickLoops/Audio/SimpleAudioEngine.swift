@@ -219,7 +219,7 @@ class SimpleAudioEngine: ObservableObject {
         let format = inputNode.outputFormat(forBus: 0)
         print("🎛️ [ENGINE] Installing unified tap with format: \(format)")
         
-        inputNode.installTap(onBus: 0, bufferSize: 2048, format: format, block: handler)
+        inputNode.installTap(onBus: 0, bufferSize: 512, format: format, block: handler)
     }
     
     private func removeTapIfExists() {

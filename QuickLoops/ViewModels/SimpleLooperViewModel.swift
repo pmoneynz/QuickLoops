@@ -64,7 +64,7 @@ class SimpleLooperViewModel: ObservableObject {
         case .stopped:
             startPlayback()
         case .playing:
-            stopPlayback()
+            restartPlayback()
         case .recording:
             break // Should not be reachable when play button is enabled
         }
@@ -184,6 +184,27 @@ class SimpleLooperViewModel: ObservableObject {
             self.loopState.transportState = .stopped
         }
         print("Playback stopped")
+    }
+    
+    private func restartPlayback() {
+        guard let fileURL = loopState.fileURL else { return }
+        
+        do {
+            // Ensure player exists
+            if player == nil {
+                player = audioEngine.createPlayer()
+                try player?.loadAudioFile(url: fileURL)
+            }
+            
+            try player?.restartPlaying()
+            player?.setVolume(loopState.playbackVolume)
+            
+            // State remains .playing, no need to update
+            print("Playback restarted from beginning")
+        } catch {
+            print("Failed to restart playback: \(error)")
+            // TODO: Show user alert
+        }
     }
     
     private func clearLoop() {
