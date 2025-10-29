@@ -86,6 +86,42 @@ class SimpleLooperViewModel: ObservableObject {
         clearLoop()
     }
     
+    func pitchUp() {
+        guard loopState.hasAudio else { return }
+        
+        let newRate = loopState.varispeedRate + 0.01
+        let clampedRate = min(1.2, newRate)
+        
+        DispatchQueue.main.async {
+            self.loopState.varispeedRate = clampedRate
+        }
+        
+        player?.adjustPitch(to: clampedRate)
+    }
+    
+    func pitchDown() {
+        guard loopState.hasAudio else { return }
+        
+        let newRate = loopState.varispeedRate - 0.01
+        let clampedRate = max(0.8, newRate)
+        
+        DispatchQueue.main.async {
+            self.loopState.varispeedRate = clampedRate
+        }
+        
+        player?.adjustPitch(to: clampedRate)
+    }
+    
+    func pitchReset() {
+        guard loopState.hasAudio else { return }
+        
+        DispatchQueue.main.async {
+            self.loopState.varispeedRate = 1.0
+        }
+        
+        player?.adjustPitch(to: 1.0)
+    }
+    
     func setPlaybackVolume(_ volume: Float) {
         DispatchQueue.main.async {
             self.loopState.playbackVolume = volume
@@ -163,6 +199,10 @@ class SimpleLooperViewModel: ObservableObject {
         do {
             player = audioEngine.createPlayer()
             try player?.loadAudioFile(url: fileURL)
+            
+            // Set varispeed rate before starting playback
+            player?.adjustPitch(to: loopState.varispeedRate)
+            
             try player?.startPlaying()
             
             // Set the current volume
@@ -196,6 +236,9 @@ class SimpleLooperViewModel: ObservableObject {
                 try player?.loadAudioFile(url: fileURL)
             }
             
+            // Set varispeed rate before restarting
+            player?.adjustPitch(to: loopState.varispeedRate)
+            
             try player?.restartPlaying()
             player?.setVolume(loopState.playbackVolume)
             
@@ -221,6 +264,7 @@ class SimpleLooperViewModel: ObservableObject {
             self.loopState.fileURL = nil
             self.loopState.currentSavedLoop = nil
             self.loopState.transportState = .stopped
+            self.loopState.varispeedRate = 1.0
         }
         
         print("Loop cleared")
@@ -275,6 +319,8 @@ class SimpleLooperViewModel: ObservableObject {
             self.loopState.fileURL = savedLoop.fileURL
             self.loopState.hasAudio = true
             self.loopState.currentSavedLoop = savedLoop
+            // Reset varispeed when loading a new loop
+            self.loopState.varispeedRate = 1.0
         }
         
         print("Successfully loaded loop: \(savedLoop.name)")

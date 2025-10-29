@@ -244,6 +244,9 @@ struct MIDISettingsView: View {
         case .play: return .green
         case .stop: return .yellow
         case .clear: return .orange
+        case .pitchUp: return .blue
+        case .pitchDown: return .blue
+        case .pitchReset: return .purple
         }
     }
     

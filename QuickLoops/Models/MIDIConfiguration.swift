@@ -5,6 +5,9 @@ struct MIDIConfiguration: Codable, Equatable {
     var playNote: UInt8 = 0      // D4
     var stopNote: UInt8 = 1      // E4
     var clearNote: UInt8 = 2     // F4
+    var pitchUpNote: UInt8 = 41   // F2
+    var pitchDownNote: UInt8 = 43  // G2
+    var pitchResetNote: UInt8 = 45  // A2
     
     private static let userDefaultsKey = "MIDIConfiguration"
     
@@ -16,6 +19,9 @@ struct MIDIConfiguration: Codable, Equatable {
         case .play: return playNote
         case .stop: return stopNote
         case .clear: return clearNote
+        case .pitchUp: return pitchUpNote
+        case .pitchDown: return pitchDownNote
+        case .pitchReset: return pitchResetNote
         }
     }
     
@@ -25,6 +31,9 @@ struct MIDIConfiguration: Codable, Equatable {
         case .play: playNote = note
         case .stop: stopNote = note
         case .clear: clearNote = note
+        case .pitchUp: pitchUpNote = note
+        case .pitchDown: pitchDownNote = note
+        case .pitchReset: pitchResetNote = note
         }
     }
     
@@ -34,6 +43,9 @@ struct MIDIConfiguration: Codable, Equatable {
         case playNote: return .play
         case stopNote: return .stop
         case clearNote: return .clear
+        case pitchUpNote: return .pitchUp
+        case pitchDownNote: return .pitchDown
+        case pitchResetNote: return .pitchReset
         default: return nil
         }
     }
@@ -59,7 +71,7 @@ struct MIDIConfiguration: Codable, Equatable {
 }
 
 enum TransportAction: String, CaseIterable, Codable {
-    case record, play, stop, clear
+    case record, play, stop, clear, pitchUp, pitchDown, pitchReset
     
     var displayName: String {
         switch self {
@@ -67,6 +79,9 @@ enum TransportAction: String, CaseIterable, Codable {
         case .play: return "Play"
         case .stop: return "Stop"
         case .clear: return "Clear"
+        case .pitchUp: return "Pitch Up"
+        case .pitchDown: return "Pitch Down"
+        case .pitchReset: return "Reset Pitch"
         }
     }
     
@@ -76,6 +91,9 @@ enum TransportAction: String, CaseIterable, Codable {
         case .play: return "play.circle"
         case .stop: return "stop.circle"
         case .clear: return "trash.circle"
+        case .pitchUp: return "arrow.up"
+        case .pitchDown: return "arrow.down"
+        case .pitchReset: return "arrow.counterclockwise"
         }
     }
 } 

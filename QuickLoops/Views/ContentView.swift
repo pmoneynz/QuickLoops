@@ -19,7 +19,10 @@ struct ContentView: View {
                 onRecord: viewModel.recordButtonPressed,
                 onPlay: viewModel.playButtonPressed,
                 onStop: viewModel.stopButtonPressed,
-                onClear: viewModel.clearButtonPressed
+                onClear: viewModel.clearButtonPressed,
+                onPitchUp: viewModel.pitchUp,
+                onPitchDown: viewModel.pitchDown,
+                onPitchReset: viewModel.pitchReset
             )
             
             // Input Monitoring Toggle (standalone)
@@ -207,6 +210,9 @@ struct ContentView: View {
         midiManager.onPlay = viewModel.playButtonPressed
         midiManager.onStop = viewModel.stopButtonPressed
         midiManager.onClear = viewModel.clearButtonPressed
+        midiManager.onPitchUp = viewModel.pitchUp
+        midiManager.onPitchDown = viewModel.pitchDown
+        midiManager.onPitchReset = viewModel.pitchReset
     }
 }
 

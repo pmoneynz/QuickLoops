@@ -22,6 +22,9 @@ class MIDIManager: ObservableObject {
     var onPlay: (() -> Void)?
     var onStop: (() -> Void)?
     var onClear: (() -> Void)?
+    var onPitchUp: (() -> Void)?
+    var onPitchDown: (() -> Void)?
+    var onPitchReset: (() -> Void)?
     
     // MARK: - Learning Mode
     @Published var isLearningMode = false
@@ -230,6 +233,12 @@ class MIDIManager: ObservableObject {
             onStop?()
         case .clear:
             onClear?()
+        case .pitchUp:
+            onPitchUp?()
+        case .pitchDown:
+            onPitchDown?()
+        case .pitchReset:
+            onPitchReset?()
         }
     }
     

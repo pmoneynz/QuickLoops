@@ -7,6 +7,9 @@ struct TransportControlsView: View {
     let onPlay: () -> Void
     let onStop: () -> Void
     let onClear: () -> Void
+    let onPitchUp: () -> Void
+    let onPitchDown: () -> Void
+    let onPitchReset: () -> Void
     
     private let buttonSize: CGFloat = 60
     
@@ -61,23 +64,56 @@ struct TransportControlsView: View {
                 .animation(.easeInOut(duration: 0.2), value: loopState.transportState)
                 .keyboardShortcut(stopButtonKeyboardShortcut, modifiers: [])
                 .help("Stop [Space]")
-                
-                // Clear Button
-                Button(action: onClear) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 24, weight: .bold))
+            }
+            
+            // Pitch Control Buttons
+            HStack(spacing: 20) {
+                // Pitch Down Button
+                Button(action: onPitchDown) {
+                    Image(systemName: "minus")
+                        .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.white)
-                        .frame(width: buttonSize, height: buttonSize)
-                        .background(clearButtonColor)
+                        .frame(width: buttonSize * 0.75, height: buttonSize * 0.75)
+                        .background(pitchDownButtonColor)
                         .clipShape(Circle())
-                        .scaleEffect(clearButtonScale)
                 }
                 .buttonStyle(.plain)
-                .disabled(!clearButtonEnabled)
-                .animation(.easeInOut(duration: 0.2), value: loopState.transportState)
-                .keyboardShortcut(.delete, modifiers: [.command])
-                .help("Clear [Cmd+Delete]")
+                .disabled(!pitchDownButtonEnabled)
+                .animation(.easeInOut(duration: 0.2), value: loopState.varispeedRate)
+                .help("Pitch Down [MIDI: G2]")
+                
+                // Pitch Reset Button
+                Button(action: onPitchReset) {
+                    Text(varispeedDisplayText)
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.primary)
+                        .frame(width: 50)
+                        .foregroundColor(.white)
+                        .frame(width: buttonSize * 0.75, height: buttonSize * 0.75)
+                        .background(pitchResetButtonColor)
+                        .clipShape(Circle())
+                }
+                .buttonStyle(.plain)
+                .disabled(!pitchResetButtonEnabled)
+                .animation(.easeInOut(duration: 0.2), value: loopState.varispeedRate)
+                .help("Reset Pitch [MIDI: A2]")
+                
+                // Pitch Up Button
+                Button(action: onPitchUp) {
+                    Image(systemName: "plus")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(.white)
+                        .frame(width: buttonSize * 0.75, height: buttonSize * 0.75)
+                        .background(pitchUpButtonColor)
+                        .clipShape(Circle())
+                }
+                .buttonStyle(.plain)
+                .disabled(!pitchUpButtonEnabled)
+                .animation(.easeInOut(duration: 0.2), value: loopState.varispeedRate)
+                .help("Pitch Up [MIDI: F2]")
+                
             }
+            .padding(.top, 8)
         }
     }
     
@@ -97,6 +133,18 @@ struct TransportControlsView: View {
     
     private var clearButtonEnabled: Bool {
         loopState.canClear
+    }
+    
+    private var pitchUpButtonEnabled: Bool {
+        loopState.hasAudio && loopState.varispeedRate < 1.2
+    }
+    
+    private var pitchDownButtonEnabled: Bool {
+        loopState.hasAudio && loopState.varispeedRate > 0.8
+    }
+    
+    private var pitchResetButtonEnabled: Bool {
+        loopState.hasAudio && abs(loopState.varispeedRate - 1.0) > 0.001
     }
     
     // MARK: - Button Icons
@@ -131,6 +179,35 @@ struct TransportControlsView: View {
     
     private var clearButtonColor: Color {
         clearButtonEnabled ? .orange : .gray
+    }
+    
+    private var pitchUpButtonColor: Color {
+        if !pitchUpButtonEnabled {
+            return .gray
+        }
+        return loopState.varispeedRate >= 1.2 ? .blue.opacity(0.6) : .blue
+    }
+    
+    private var pitchDownButtonColor: Color {
+        if !pitchDownButtonEnabled {
+            return .gray
+        }
+        return loopState.varispeedRate <= 0.8 ? .blue.opacity(0.6) : .blue
+    }
+    
+    private var pitchResetButtonColor: Color {
+        if !pitchResetButtonEnabled {
+            return .gray
+        }
+        return .purple
+    }
+    
+    private var varispeedDisplayText: String {
+        let percentage = loopState.varispeedPercentage
+        if abs(percentage) < 0.5 {
+            return "0"
+        }
+        return String(format: "%+.0f", percentage)
     }
     
     // MARK: - Button Scales
@@ -177,7 +254,10 @@ struct TransportControlsView: View {
             onRecord: {},
             onPlay: {},
             onStop: {},
-            onClear: {}
+            onClear: {},
+            onPitchUp: {},
+            onPitchDown: {},
+            onPitchReset: {}
         )
         
         // Recording state
@@ -191,7 +271,10 @@ struct TransportControlsView: View {
             onRecord: {},
             onPlay: {},
             onStop: {},
-            onClear: {}
+            onClear: {},
+            onPitchUp: {},
+            onPitchDown: {},
+            onPitchReset: {}
         )
         
         // Playing state
@@ -205,7 +288,10 @@ struct TransportControlsView: View {
             onRecord: {},
             onPlay: {},
             onStop: {},
-            onClear: {}
+            onClear: {},
+            onPitchUp: {},
+            onPitchDown: {},
+            onPitchReset: {}
         )
     }
     .padding()

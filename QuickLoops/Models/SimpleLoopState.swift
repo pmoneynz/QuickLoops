@@ -14,6 +14,7 @@ class SimpleLoopState: ObservableObject {
     @Published var inputLevel: Float = 0.0
     @Published var playbackVolume: Float = 1.0
     @Published var inputMonitoringEnabled: Bool = false
+    @Published var varispeedRate: Float = 1.0
     
     // Save/Load state properties
     @Published var currentSavedLoop: SavedLoop?
@@ -48,5 +49,9 @@ class SimpleLoopState: ObservableObject {
 
     var canLoad: Bool {
         return transportState == .stopped
+    }
+    
+    var varispeedPercentage: Float {
+        return (varispeedRate - 1.0) * 100
     }
 } 
