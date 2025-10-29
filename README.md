@@ -14,9 +14,13 @@ A minimal, essential audio looper application for macOS built with SwiftUI and A
 - **Record Button (●)**: Start/stop recording [Return]
 - **Play Button (▶)**: Start/stop playback (available when loop exists) [Space]
 - **Stop Button (■)**: Stop current recording or playback [Space when recording]
-- **Clear Button (🗑)**: Delete current loop (only when stopped) [Cmd+Delete]
+- **Pitch Controls**: Adjust playback speed ±20%
+  - **Pitch Up (+)**: Increase speed/pitch by 1% per click [MIDI: F2]
+  - **Pitch Down (-)**: Decrease speed/pitch by 1% per click [MIDI: G2]
+  - **Reset Pitch (0)**: Reset to normal speed [MIDI: A2]
 
 ### Audio Features
+- **Varispeed Pitch Control**: Adjust playback speed ±20% with real-time pitch/speed control
 - **Input Monitoring Toggle**: Control whether input audio is heard through speakers/headphones
 - **Real-time Level Meter**: Visual feedback of incoming audio levels (first channel)
 - **MIDI Integration**: Full MIDI controller support with customizable mappings
@@ -53,6 +57,7 @@ QuickLoops/
 - **AVAudioInputNode**: Multi-channel microphone input with dynamic format detection
 - **AVAudioMixerNode**: Separate monitoring and main mixer nodes
 - **AVAudioPlayerNode**: Loop playback with seamless scheduling
+- **AVAudioUnitVarispeed**: Real-time pitch/speed adjustment (±20%)
 - **AVAudioFile**: Native format file recording and reading
 
 ## 🚀 Getting Started
@@ -74,7 +79,7 @@ QuickLoops/
 3. **Automatic Playback**: Recording automatically transitions to playback when stopped
 4. **Manual Playback**: Use the green Play button or press Space to start/stop playback
 5. **Stop**: Use the yellow Stop button or press Space (when recording) to stop
-6. **Clear**: Use the orange Clear button or press Cmd+Delete to delete the current loop
+6. **Varispeed Control**: Adjust playback speed during playback using +/- buttons or MIDI notes
 7. **Save/Load**: Use Cmd+S to save loops and Cmd+O to open the loop library
 8. **MIDI Control**: Configure MIDI mappings in Settings for hardware controller integration
 
@@ -100,8 +105,12 @@ The application features a clean, minimal design with:
 │        ████████░░░░░░░░░░░░         │
 ├─────────────────────────────────────┤
 │          Transport Controls         │
-│    [●] [▶] [■] [🗑]               │
-│   Record Play Stop Clear            │
+│    [●] [▶] [■]                    │
+│   Record Play Stop                 │
+│                                     │
+│       Pitch Controls                │
+│    [-] [0] [+]                      │
+│   Down Reset Up                    │
 ├─────────────────────────────────────┤
 │        Input Monitoring             │
 │    ☐ Input Monitor (OFF by default) │
@@ -110,8 +119,9 @@ The application features a clean, minimal design with:
 
 ### Visual Design Elements
 - **Large buttons** with SF Symbols for clear visual feedback
-- **Color coding**: Record (red), Play (green), Stop (yellow), Clear (orange)
+- **Color coding**: Record (red), Play (green), Stop (yellow), Pitch (blue/purple)
 - **Active button states**: Color changes and smooth animations when active
+- **Varispeed display**: Shows current pitch adjustment as +/- integer (e.g., +5, -10) on reset button
 - **Real-time level meter**: 20-segment horizontal bars with green/yellow/red zones
 - **Input monitoring toggle**: Speaker icon with clear on/off states
 - **Responsive UI**: Minimal latency with smooth state transitions
@@ -149,6 +159,35 @@ The application uses a reactive architecture with:
 - Automatic recovery from audio device changes
 - Format compatibility validation
 - Thread-safe state management
+
+## 🎚️ Varispeed Pitch Control
+
+### Overview
+Varispeed allows real-time adjustment of playback speed and pitch during loop playback. This feature uses `AVAudioUnitVarispeed` to simultaneously change both playback speed and pitch, maintaining musical relationships.
+
+### Features
+- **Range**: ±20% playback speed adjustment (0.8x to 1.2x)
+- **Precision**: 1% increments per button press
+- **Real-time**: Changes apply instantly during playback without interruption
+- **Visual Feedback**: Current adjustment displayed as +/- integer (e.g., +5, -10, 0)
+- **MIDI Support**: Full MIDI control via configurable note mappings
+
+### Default MIDI Mappings
+- **F2 (MIDI note 41)**: Pitch Up (+1%)
+- **G2 (MIDI note 43)**: Pitch Down (-1%)
+- **A2 (MIDI note 45)**: Reset Pitch (0%)
+
+### Usage
+1. **During Playback**: Press + button or F2 MIDI note to increase speed/pitch
+2. **Speed Down**: Press - button or G2 MIDI note to decrease speed/pitch
+3. **Reset**: Press the center button showing current value or A2 MIDI note to reset to normal speed
+4. **Visual Feedback**: Current adjustment displayed in real-time on reset button (e.g., "+5", "-10", "0")
+
+### Technical Implementation
+- Uses `AVAudioUnitVarispeed` in the audio chain between player node and mixer
+- Rate clamping ensures values stay within ±20% range
+- Real-time rate changes without rescheduling playback
+- State persists across playback restarts but resets when loop is cleared
 
 ## 🎧 Input Monitoring Feature
 
@@ -215,8 +254,12 @@ This minimal version intentionally excludes:
 - [ ] Automatic transition from recording to playback
 - [ ] Loop plays continuously without dropouts
 - [ ] Transport controls respond correctly in all states
+- [ ] Varispeed pitch controls work correctly (±20% range)
+- [ ] Pitch adjustments apply in real-time during playback
+- [ ] MIDI pitch control notes (F2, G2, A2) function correctly
+- [ ] Pitch reset returns to normal speed (0%)
 - [ ] Input monitoring toggle works without affecting recording
-- [ ] Clear function resets to ready state
+- [ ] Clear function resets to ready state and varispeed
 - [ ] No audio dropouts or glitches with format changes
 - [ ] Memory usage remains stable during extended use
 - [ ] Multi-channel devices record all channels
@@ -287,8 +330,10 @@ This is a minimal implementation focused on core functionality. When contributin
 3. **Record**: Click the Record button (●) to start recording in device's native format
 4. **Stop Recording**: Click Record again to stop and automatically prepare for playback
 5. **Play**: Click the Play button (▶) to hear your loop
-6. **Stop**: Click Stop (■) to stop playback
-7. **Clear**: Click Clear (🗑) to delete the current loop and start over
+6. **Adjust Pitch**: Use +/- buttons to adjust playback speed/pitch during playback (±20%)
+7. **Reset Pitch**: Click the center button (shows current value) to reset to normal speed
+8. **Stop**: Click Stop (■) to stop playback
+9. **Clear**: Clear function removes the loop and resets pitch to normal
 
 ### Monitoring Controls
 - **Input Level Meter**: Shows real-time input levels with 20-segment color-coded display
@@ -299,8 +344,15 @@ This is a minimal implementation focused on core functionality. When contributin
 ### Transport States
 - **Press Record**: Ready to capture new loop in device's native format
 - **Recording...**: Currently capturing audio input via unified tap system
-- **Playing Loop**: Currently playing back recorded audio with seamless looping
+- **Playing Loop**: Currently playing back recorded audio with seamless looping and varispeed control
 - **Paused**: Audio recorded and ready for playback
+
+### Varispeed Control
+- **Pitch Up (+)**: Each press increases speed/pitch by 1% (up to +20%)
+- **Pitch Down (-)**: Each press decreases speed/pitch by 1% (down to -20%)
+- **Reset (0)**: Returns playback to normal speed (0%)
+- **Display**: Current adjustment shown as +/- integer on reset button
+- **MIDI**: F2 (up), G2 (down), A2 (reset) - configurable in MIDI Settings
 
 ## Architecture
 
@@ -331,7 +383,7 @@ QuickLoops/
 ├── Audio/
 │   ├── SimpleAudioEngine.swift    # Unified tap engine with monitoring
 │   ├── SimpleRecorder.swift       # Native format recording
-│   ├── SimplePlayer.swift         # Seamless loop playback
+│   ├── SimplePlayer.swift         # Seamless loop playback with varispeed
 │   ├── LoopPreviewEngine.swift    # Loop library preview engine
 │   └── MIDIManager.swift          # MIDI controller integration
 ├── Models/
